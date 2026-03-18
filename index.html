@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello Garden – Themazoeker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js)"></script>
+</head>
+<body>
+  <header>
+    <h1>🌿 Hello Garden 2026 – Themazoeker</h1>
+    <p>Typ een <strong>Nederlandse naam</strong> of <strong>Omschrijving</strong> en zie direct het thema.</p>
+  </header>
+
+  <main>
+    <input id="searchBox" type="text" placeholder="Zoek plant…" list="datalist">
+    <datalist id="datalist"></datalist>
+    <div id="result"></div>
+  </main>
+
+  <footer>
+    <small>© Hello Garden – automatisch gegenereerd vanuit <code>data.csv</code></small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
