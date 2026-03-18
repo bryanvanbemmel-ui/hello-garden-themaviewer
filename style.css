@@ -1,44 +1,61 @@
-// ===================== style.css =====================
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #0f172a;
-  color: #fff;
-}
+// ===================== script.js =====================
+const themeColors = {
+  "Bijen- en vlinderlokkers": "#FEE191",
+  "Bodembedekkend": "#B5D99C",
+  "Geurend": "#FFD7E6",
+  "Schaduw": "#C2C9E8",
+  "Specials": "#C1B2FF",
+  "Grassen": "#B0D0D3",
+  "Kruiden": "#C9E0A5",
+  "Wild & Inheems": "#DEC089"
+};
 
-header {
-  text-align: center;
-  padding: 20px;
-  background: #111827;
-}
+let allData = [];
 
-input {
-  width: 90%;
-  max-width: 600px;
-  margin: 20px auto;
-  display: block;
-  padding: 15px;
-  border-radius: 10px;
-  border: none;
-  font-size: 16px;
-}
+fetch("data.json")
+  .then(res => res.json())
+  .then(data => {
+    allData = data;
+    console.log("DATA OK", data);
+  })
+  .catch(err => console.error("JSON fout:", err));
 
-#results {
-  max-width: 800px;
-  margin: auto;
-}
+const input = document.getElementById("searchBox");
 
-.card {
-  background: #1f2937;
-  margin: 10px;
-  padding: 15px;
-  border-radius: 12px;
-}
+input.addEventListener("input", () => {
+  const value = input.value.toLowerCase();
 
-.theme {
-  margin-top: 10px;
-  padding: 8px;
-  border-radius: 8px;
-  display: inline-block;
-  font-weight: bold;
+  if (!value) {
+    document.getElementById("results").innerHTML = "";
+    return;
+  }
+
+  const matches = allData.filter(r =>
+    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
+    (r["Omschrijving"] || "").toLowerCase().includes(value)
+  );
+
+  render(matches.slice(0, 10));
+});
+
+function render(list) {
+  const container = document.getElementById("results");
+
+  if (list.length === 0) {
+    container.innerHTML = "<p>Geen resultaten</p>";
+    return;
+  }
+
+  container.innerHTML = list.map(item => {
+    const thema = (item["Thema"] || "Onbekend").trim();
+    const color = themeColors[thema] || "#333";
+
+    return `
+      <div class="card">
+        <h3>${item["Nederlandse naam"]}</h3>
+        <p>${item["Omschrijving"]}</p>
+        <div class="theme" style="background:${color}">${thema}</div>
+      </div>
+    `;
+  }).join("");
 }
