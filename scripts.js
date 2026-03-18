@@ -13,11 +13,29 @@ const themeColors = {
 };
 
 // laad CSV en vul keuzelijst
-Papa.parse(csvFile, {
-  download: true,
-  header: true,
-  delimiter: ";",   // 👈 DEZE TOEVOEGEN
-  complete: function (results) {
+fetch("data/data.json")
+  .then(res => res.json())
+  .then(data => {
+
+    const datalist = document.getElementById("datalist");
+
+    data.forEach(row => {
+      if (row["Nederlandse naam"]) {
+        const opt1 = document.createElement("option");
+        opt1.value = row["Nederlandse naam"];
+        datalist.appendChild(opt1);
+      }
+
+      if (row["Omschrijving"]) {
+        const opt2 = document.createElement("option");
+        opt2.value = row["Omschrijving"];
+        datalist.appendChild(opt2);
+      }
+    });
+
+    const input = document.getElementById("searchBox");
+    input.addEventListener("input", () => showResult(input.value, data));
+  });
     const data = results.data.filter(row => row.Omschrijving);
     const datalist = document.getElementById("datalist");
     data.forEach(row => {
