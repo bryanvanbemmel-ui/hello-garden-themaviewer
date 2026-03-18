@@ -30,10 +30,15 @@ input.addEventListener("input", () => {
     return;
   }
 
-  const matches = allData.filter(r =>
-    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
-    (r["Omschrijving"] || "").toLowerCase().includes(value)
-  );
+const matches = allData
+  .map(r => ({
+    ...r,
+    score:
+      (r["Nederlandse naam"] || "").toLowerCase().includes(value) ? 2 :
+      (r["Omschrijving"] || "").toLowerCase().includes(value) ? 1 : 0
+  }))
+  .filter(r => r.score > 0)
+  .sort((a, b) => b.score - a.score);
 
   showSuggestions(matches.slice(0, 5));
   render(matches.slice(0, 10));
