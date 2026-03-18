@@ -46,6 +46,24 @@ function render(list) {
     return;
   }
 
+  #suggestions {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.suggestion {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestion:hover {
+  background: #f3f4f6;
+}
   container.innerHTML = list.map(item => {
     const thema = (item["Thema"] || "Onbekend").trim();
     const color = themeColors[thema] || "#333";
