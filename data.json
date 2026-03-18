@@ -1,0 +1,13 @@
+// ===================== data.json (voorbeeld) =====================
+[
+  {
+    "Nederlandse naam": "Lavendel",
+    "Omschrijving": "Geurende paarse plant",
+    "Thema": "Geurend"
+  },
+  {
+    "Nederlandse naam": "Achillea",
+    "Omschrijving": "Milly Rock Red",
+    "Thema": "Bijen- en vlinderlokkers"
+  }
+]
