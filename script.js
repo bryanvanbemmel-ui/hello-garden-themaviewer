@@ -26,6 +26,7 @@ input.addEventListener("input", () => {
 
   if (!value) {
     document.getElementById("results").innerHTML = "";
+    document.getElementById("suggestions").innerHTML = "";
     return;
   }
 
@@ -34,6 +35,7 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
+  showSuggestions(matches.slice(0, 5));
   render(matches.slice(0, 10));
 });
 
