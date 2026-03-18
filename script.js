@@ -15,7 +15,7 @@ fetch("data.json")
   .then(res => res.json())
   .then(data => {
     allData = data;
-    console.log("DATA OK", data);
+    render(allData); // 👈 toont direct alle planten
   })
   .catch(err => console.error("JSON fout:", err));
 
@@ -25,62 +25,37 @@ input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
   if (!value) {
-    document.getElementById("results").innerHTML = "";
-    document.getElementById("suggestions").innerHTML = "";
+    render(allData);
     return;
   }
 
-const matches = allData
-  .map(r => ({
-    ...r,
-    score:
-      (r["Nederlandse naam"] || "").toLowerCase().includes(value) ? 2 :
-      (r["Omschrijving"] || "").toLowerCase().includes(value) ? 1 : 0
-  }))
-  .filter(r => r.score > 0)
-  .sort((a, b) => b.score - a.score);
+  const matches = allData.filter(r =>
+    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
+    (r["Omschrijving"] || "").toLowerCase().includes(value)
+  );
 
-  showSuggestions(matches.slice(0, 5));
-  render(matches.slice(0, 10));
+  render(matches);
 });
-
-function showSuggestions(list) {
-  const box = document.getElementById("suggestions");
-
-  if (list.length === 0) {
-    box.innerHTML = "";
-    return;
-  }
-
-  box.innerHTML = list.map(item => `
-    <div class="suggestion" onclick="selectItem('${item["Nederlandse naam"]}')">
-      ${item["Nederlandse naam"]}
-    </div>
-  `).join("");
-}
-
-function selectItem(name) {
-  document.getElementById("searchBox").value = name;
-  document.getElementById("suggestions").innerHTML = "";
-}
 
 function render(list) {
   const container = document.getElementById("results");
 
   if (list.length === 0) {
-    container.innerHTML = "<p>Geen resultaten</p>";
+    container.innerHTML = "<p style='text-align:center;'>Geen resultaten</p>";
     return;
   }
 
   container.innerHTML = list.map(item => {
     const thema = (item["Thema"] || "Onbekend").trim();
-    const color = themeColors[thema] || "#333";
+    const color = themeColors[thema] || "#eee";
 
     return `
       <div class="card">
         <h3>${item["Nederlandse naam"]}</h3>
-        <p>${item["Omschrijving"]}</p>
-        <div class="theme" style="background:${color}">${thema}</div>
+        <p>${item["Omschrijving"] || ""}</p>
+        <div class="theme" style="background:${color}">
+          ${thema}
+        </div>
       </div>
     `;
   }).join("");
