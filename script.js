@@ -39,6 +39,26 @@ input.addEventListener("input", () => {
   render(matches.slice(0, 10));
 });
 
+function showSuggestions(list) {
+  const box = document.getElementById("suggestions");
+
+  if (list.length === 0) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = list.map(item => `
+    <div class="suggestion" onclick="selectItem('${item["Nederlandse naam"]}')">
+      ${item["Nederlandse naam"]}
+    </div>
+  `).join("");
+}
+
+function selectItem(name) {
+  document.getElementById("searchBox").value = name;
+  document.getElementById("suggestions").innerHTML = "";
+}
+
 function render(list) {
   const container = document.getElementById("results");
 
