@@ -16,6 +16,7 @@ const themeColors = {
 Papa.parse(csvFile, {
   download: true,
   header: true,
+  delimiter: ";",   // 👈 DEZE TOEVOEGEN
   complete: function (results) {
     const data = results.data.filter(row => row.Omschrijving);
     const datalist = document.getElementById("datalist");
