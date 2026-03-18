@@ -13,7 +13,7 @@ const themeColors = {
 };
 
 // laad CSV en vul keuzelijst
-fetch("data.json")
+fetch("data_full.json")
   .then(res => res.json())
   .then(data => {
 
