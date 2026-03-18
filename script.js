@@ -1,6 +1,3 @@
-const csvFile = "data.csv";
-
-// themakleuren
 const themeColors = {
   "Bijen- en vlinderlokkers": "#FEE191",
   "Bodembedekkend": "#B5D99C",
@@ -12,65 +9,52 @@ const themeColors = {
   "Wild & Inheems": "#DEC089"
 };
 
-// laad CSV en vul keuzelijst
-fetch("data_full.json")
+let allData = [];
+
+fetch("data.json")
   .then(res => res.json())
   .then(data => {
+    allData = data;
+    console.log("DATA OK", data);
+  })
+  .catch(err => console.error("JSON fout:", err));
 
-    const datalist = document.getElementById("datalist");
+const input = document.getElementById("searchBox");
 
-    data.forEach(row => {
-      if (row["Nederlandse naam"]) {
-        const opt1 = document.createElement("option");
-        opt1.value = row["Nederlandse naam"];
-        datalist.appendChild(opt1);
-      }
+input.addEventListener("input", () => {
+  const value = input.value.toLowerCase();
 
-      if (row["Omschrijving"]) {
-        const opt2 = document.createElement("option");
-        opt2.value = row["Omschrijving"];
-        datalist.appendChild(opt2);
-      }
-    });
-
-    const input = document.getElementById("searchBox");
-    input.addEventListener("input", () => showResult(input.value, data));
-  });
-    const data = results.data.filter(row => row.Omschrijving);
-    const datalist = document.getElementById("datalist");
-    data.forEach(row => {
-      const opt1 = document.createElement("option");
-      opt1.value = row["Nederlandse naam"];
-      datalist.appendChild(opt1);
-
-      const opt2 = document.createElement("option");
-      opt2.value = row["Omschrijving"];
-      datalist.appendChild(opt2);
-    });
-
-    const input = document.getElementById("searchBox");
-    input.addEventListener("change", () => showResult(input.value, data));
-  }
-});
-
-function showResult(value, data) {
-  const resultDiv = document.getElementById("result");
-  const row = data.find(r =>
-    (r["Nederlandse naam"] && r["Nederlandse naam"].toLowerCase() === value.toLowerCase()) ||
-    (r["Omschrijving"] && r["Omschrijving"].toLowerCase() === value.toLowerCase())
-  );
-
-  if (!row) {
-    resultDiv.innerHTML = "<p>❌ Niet gevonden. Controleer spelling.</p>";
+  if (!value) {
+    document.getElementById("results").innerHTML = "";
     return;
   }
 
-  const thema = row["Thema"] || "Onbekend";
-  const color = themeColors[thema] || "#eee";
+  const matches = allData.filter(r =>
+    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
+    (r["Omschrijving"] || "").toLowerCase().includes(value)
+  );
 
-  resultDiv.innerHTML = `
-    <h2>${row["Nederlandse naam"] || ""}</h2>
-    <p><em>${row["Omschrijving"] || ""}</em></p>
-    <div class="theme-box" style="background:${color};">${thema}</div>
-  `;
+  render(matches.slice(0, 10));
+});
+
+function render(list) {
+  const container = document.getElementById("results");
+
+  if (list.length === 0) {
+    container.innerHTML = "<p>Geen resultaten</p>";
+    return;
+  }
+
+  container.innerHTML = list.map(item => {
+    const thema = (item["Thema"] || "Onbekend").trim();
+    const color = themeColors[thema] || "#333";
+
+    return `
+      <div class="card">
+        <h3>${item["Nederlandse naam"]}</h3>
+        <p>${item["Omschrijving"]}</p>
+        <div class="theme" style="background:${color}">${thema}</div>
+      </div>
+    `;
+  }).join("");
 }
