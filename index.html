@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hello Garden – Themazoeker</title>
- <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header>
-    <h1>🌿 Hello Garden – Themazoeker</h1>
-    <p>Zoek op naam of omschrijving</p>
-  </header>
 
-  <main>
-    <input id="searchBox" type="text" placeholder="Zoek plant...">
-    <div id="results"></div>
-  </main>
-  
-<div id="suggestions"></div>
-<div id="results"></div>
-  
-  <script src="script.js"></script>
+<body>
+
+<header>
+  <h1>🌿 Hello Garden – Themazoeker</h1>
+  <p>Zoek op naam of omschrijving</p>
+</header>
+
+<main>
+  <input id="searchBox" type="text" placeholder="Zoek plant..." autocomplete="off">
+
+  <div id="suggestions"></div>
+  <div id="results"></div>
+</main>
+
+<script src="script.js"></script>
+
 </body>
 </html>
