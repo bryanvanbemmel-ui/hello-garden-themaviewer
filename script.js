@@ -37,10 +37,18 @@ input.addEventListener("input", () => {
 function showSuggestions(list) {
   const box = document.getElementById("suggestions");
 
-  if (list.length === 0) {
+  if (!list || list.length === 0) {
     box.innerHTML = "";
     return;
   }
+
+  box.innerHTML = list.map(item => `
+    <div class="suggestion" onclick="selectItem('${(item["Nederlandse naam"] || "").replace(/'/g, "\\'")}')">
+      <strong>${item["Nederlandse naam"] || ""}</strong><br>
+      <small>${item["Omschrijving"] || ""}</small>
+    </div>
+  `).join("");
+}
 
   box.innerHTML = list.map(item => `
     <div class="suggestion" onclick="selectItem('${item["Nederlandse naam"]}')">
