@@ -60,3 +60,29 @@ function render(list) {
     `;
   }).join("");
 }
+function showSuggestions(list) {
+  const box = document.getElementById("suggestions");
+
+  if (list.length === 0) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = list.map(item => `
+    <div class="suggestion" onclick="selectItem('${item["Nederlandse naam"]}')">
+      <strong>${item["Nederlandse naam"]}</strong><br>
+      <small>${item["Omschrijving"]}</small>
+    </div>
+  `).join("");
+}
+
+function selectItem(name) {
+  const matches = allData.filter(r =>
+    (r["Nederlandse naam"] || "").toLowerCase() === name.toLowerCase()
+  );
+
+  document.getElementById("searchBox").value = name;
+  document.getElementById("suggestions").innerHTML = "";
+
+  render(matches);
+}
