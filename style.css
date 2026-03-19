@@ -139,18 +139,30 @@ main {
 }
 .search-wrapper {
   position: relative;
+  width: 100%;
   max-width: 700px;
+}
+
+#searchBox {
+  width: 100%;
+  padding: 16px;
+  padding-right: 40px; /* ruimte voor kruisje */
+  border-radius: 14px;
+  border: 2px solid #ddd;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
 #clearBtn {
   position: absolute;
-  right: 15px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   font-size: 16px;
   color: #999;
   display: none;
+  user-select: none;
 }
 
 #clearBtn:hover {
