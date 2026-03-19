@@ -34,9 +34,21 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
- showSuggestions(matches.slice(0, 5));
-render(matches.slice(0, 10));
-});
+function showSuggestions(list) {
+  const box = document.getElementById("suggestions");
+
+  if (list.length === 0) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = list.map(item => `
+    <div class="suggestion" onclick="selectItem('${item["Nederlandse naam"]}')">
+      <div class="sug-title">${item["Nederlandse naam"]}</div>
+      <div class="sug-desc">${item["Omschrijving"]}</div>
+    </div>
+  `).join("");
+}
 
 function render(list) {
   const container = document.getElementById("results");
