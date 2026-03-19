@@ -1,7 +1,9 @@
+/* BASIS */
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   background: #f3f4f6;
+  color: #111;
 }
 
 /* HEADER */
@@ -13,6 +15,7 @@ header {
 
 header h1 {
   margin: 0;
+  font-size: 24px;
 }
 
 header p {
@@ -23,42 +26,62 @@ header p {
 /* CONTENT */
 main {
   padding: 20px;
+  max-width: 900px;
+  margin: auto;
 }
 
 /* INPUT */
-input {
+#searchBox {
   width: 100%;
-  max-width: 700px;
   padding: 16px;
   border-radius: 14px;
   border: 2px solid #ddd;
-  font-size: 18px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
   margin-bottom: 10px;
 }
 
-/* SUGGESTIES */
+#searchBox:focus {
+  border-color: #356859;
+}
+
+/* DROPDOWN */
 #suggestions {
-  max-width: 700px;
-  margin-bottom: 10px;
   background: white;
   border-radius: 12px;
   border: 1px solid #ddd;
   overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
 .suggestion {
-  padding: 14px;
-  border-bottom: 1px solid #eee;
+  padding: 12px;
   cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestion:last-child {
+  border-bottom: none;
 }
 
 .suggestion:hover {
   background: #f3f4f6;
 }
 
+.suggestion strong {
+  display: block;
+  font-size: 15px;
+}
+
+.suggestion small {
+  color: #666;
+}
+
 /* RESULTATEN */
 #results {
-  max-width: 800px;
+  margin-top: 10px;
 }
 
 /* CARD */
@@ -66,14 +89,14 @@ input {
   background: white;
   border-radius: 14px;
   padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  margin-bottom: 14px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
 
 /* TITEL */
 .card h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 /* OMSCHRIJVING */
@@ -84,81 +107,6 @@ input {
 
 /* THEMA */
 .theme {
-  margin-top: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  display: inline-block;
-  font-weight: bold;
-}
-
-/* MOBIEL */
-@media (max-width: 600px) {
-  main {
-    padding: 15px;
-  }
-
-  input {
-    font-size: 18px;
-  }
-}
-
-#suggestions {
-  max-width: 700px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-.suggestion {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-}
-
-.suggestion:hover {
-  background: #f3f4f6;
-}
-.sug-title {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.sug-desc {
-  font-size: 13px;
-  color: #666;
-}
-
-/* mobiel fix */
-@media (max-width: 600px) {
-  #suggestions {
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .suggestion {
-    padding: 14px;
-  }
-}
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-}
-
-.card h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.card p {
-  margin: 6px 0;
-  color: #555;
-}
-
-.theme {
   margin-top: 8px;
   padding: 6px 10px;
   border-radius: 8px;
@@ -166,4 +114,26 @@ input {
   font-weight: bold;
 }
 
+/* MOBIEL */
+@media (max-width: 600px) {
+  header {
+    padding: 15px;
+  }
 
+  header h1 {
+    font-size: 20px;
+  }
+
+  main {
+    padding: 15px;
+  }
+
+  #searchBox {
+    font-size: 18px;
+    padding: 18px;
+  }
+
+  .card h2 {
+    font-size: 18px;
+  }
+}
