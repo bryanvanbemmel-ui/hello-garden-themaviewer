@@ -104,3 +104,16 @@ document.addEventListener("click", (e) => {
     document.getElementById("suggestions").innerHTML = "";
   }
 });
+const clearBtn = document.getElementById("clearBtn");
+
+input.addEventListener("input", () => {
+  clearBtn.style.display = input.value ? "block" : "none";
+});
+
+clearBtn.addEventListener("click", () => {
+  input.value = "";
+  document.getElementById("suggestions").innerHTML = "";
+  document.getElementById("results").innerHTML = "";
+  clearBtn.style.display = "none";
+  input.focus();
+});
