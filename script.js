@@ -64,7 +64,7 @@ function selectItem(name, desc) {
     (r["Omschrijving"] || "").toLowerCase() === desc.toLowerCase()
   );
 
-  document.getElementById("searchBox").value = name + " - " + desc;
+  document.getElementById("searchBox").value = name;
   document.getElementById("suggestions").innerHTML = "";
 
   render(matches);
