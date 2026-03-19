@@ -90,3 +90,6 @@ function render(list) {
     `;
   }).join("");
 }
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
