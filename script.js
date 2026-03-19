@@ -15,7 +15,6 @@ fetch("data.json")
   .then(res => res.json())
   .then(data => {
     allData = data;
-    render(allData); // 👈 toont direct alle planten
   })
   .catch(err => console.error("JSON fout:", err));
 
@@ -25,7 +24,8 @@ input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
   if (!value) {
-    render(allData);
+    document.getElementById("suggestions").innerHTML = "";
+    document.getElementById("results").innerHTML = "";
     return;
   }
 
@@ -34,14 +34,44 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
-  render(matches);
+  showSuggestions(matches.slice(0, 5));
 });
 
+/* DROPDOWN */
+function showSuggestions(list) {
+  const box = document.getElementById("suggestions");
+
+  if (list.length === 0) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = list.map(item => `
+    <div class="suggestion" onclick="selectItem('${item["Nederlandse naam"]}')">
+      <strong>${item["Nederlandse naam"]}</strong><br>
+      <small>${item["Omschrijving"]}</small>
+    </div>
+  `).join("");
+}
+
+/* SELECT */
+function selectItem(name) {
+  const matches = allData.filter(r =>
+    (r["Nederlandse naam"] || "").toLowerCase() === name.toLowerCase()
+  );
+
+  document.getElementById("searchBox").value = name;
+  document.getElementById("suggestions").innerHTML = "";
+
+  render(matches);
+}
+
+/* RENDER */
 function render(list) {
   const container = document.getElementById("results");
 
   if (list.length === 0) {
-    container.innerHTML = "<p style='text-align:center;'>Geen resultaten</p>";
+    container.innerHTML = "<p style='text-align:center;'>Geen resultaat</p>";
     return;
   }
 
@@ -51,8 +81,8 @@ function render(list) {
 
     return `
       <div class="card">
-        <h3>${item["Nederlandse naam"]}</h3>
-        <p>${item["Omschrijving"] || ""}</p>
+        <h2>${item["Nederlandse naam"]}</h2>
+        <p>${item["Omschrijving"]}</p>
         <div class="theme" style="background:${color}">
           ${thema}
         </div>
