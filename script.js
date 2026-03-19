@@ -34,7 +34,8 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
-  render(matches.slice(0, 10));
+ showSuggestions(matches.slice(0, 5));
+render(matches.slice(0, 10));
 });
 
 function render(list) {
