@@ -69,16 +69,13 @@ function showSuggestions(list) {
 }
 
 /* SELECT */
-function selectItem(name, desc) {
-  const matches = allData.filter(r =>
-    (r["Nederlandse naam"] || "").toLowerCase() === name.toLowerCase() &&
-    (r["Omschrijving"] || "").toLowerCase() === desc.toLowerCase()
-  );
+function selectItem(index) {
+  const item = window.currentSuggestions[index];
 
-  document.getElementById("searchBox").value = name;
+  document.getElementById("searchBox").value = item["Nederlandse naam"];
   document.getElementById("suggestions").innerHTML = "";
 
-  render(matches);
+  render([item]); // 👈 alleen die ene tonen
 }
 
 /* RESULTATEN */
