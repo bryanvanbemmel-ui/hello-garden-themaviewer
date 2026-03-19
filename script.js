@@ -49,6 +49,17 @@ function showSuggestions(list) {
     return;
   }
 
+  box.innerHTML = list.map((item, index) => `
+    <div class="suggestion" onclick="selectItem(${index})">
+      <strong>${item["Nederlandse naam"] || ""}</strong><br>
+      <small>${item["Omschrijving"] || ""}</small>
+    </div>
+  `).join("");
+
+  // bewaar lijst tijdelijk
+  window.currentSuggestions = list;
+}
+
   box.innerHTML = list.map(item => `
     <div class="suggestion" onclick="selectItem('${(item["Nederlandse naam"] || "").replace(/'/g, "\\'")}', '${(item["Omschrijving"] || "").replace(/'/g, "\\'")}')
       <strong>${item["Nederlandse naam"] || ""}</strong><br>
