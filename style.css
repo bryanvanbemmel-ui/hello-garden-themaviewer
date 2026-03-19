@@ -140,5 +140,30 @@ input {
     padding: 14px;
   }
 }
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.card p {
+  margin: 6px 0;
+  color: #555;
+}
+
+.theme {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: bold;
+}
 
 
