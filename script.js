@@ -50,7 +50,7 @@ function showSuggestions(list) {
   }
 
   box.innerHTML = list.map(item => `
-    <div class="suggestion" onclick="selectItem('${(item["Nederlandse naam"] || "").replace(/'/g, "\\'")}')">
+    <div class="suggestion" onclick="selectItem('${(item["Nederlandse naam"] || "").replace(/'/g, "\\'")}', '${(item["Omschrijving"] || "").replace(/'/g, "\\'")}')
       <strong>${item["Nederlandse naam"] || ""}</strong><br>
       <small>${item["Omschrijving"] || ""}</small>
     </div>
@@ -58,9 +58,10 @@ function showSuggestions(list) {
 }
 
 /* SELECT */
-function selectItem(name) {
+function selectItem(name, desc) {
   const matches = allData.filter(r =>
-    (r["Nederlandse naam"] || "").toLowerCase() === name.toLowerCase()
+    (r["Nederlandse naam"] || "").toLowerCase() === name.toLowerCase() &&
+    (r["Omschrijving"] || "").toLowerCase() === desc.toLowerCase()
   );
 
   document.getElementById("searchBox").value = name;
