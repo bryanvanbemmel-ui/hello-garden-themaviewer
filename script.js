@@ -60,20 +60,3 @@ function render(list) {
     `;
   }).join("");
 }
-#suggestions {
-  max-width: 700px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-.suggestion {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-}
-
-.suggestion:hover {
-  background: #f3f4f6;
-}
