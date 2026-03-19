@@ -29,13 +29,24 @@ input.addEventListener("input", () => {
     return;
   }
 
-  const matches = allData.filter(r =>
-    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
-    (r["Omschrijving"] || "").toLowerCase().includes(value)
-  );
+const matches = allData
+  .map(r => {
+    const name = (r["Nederlandse naam"] || "").toLowerCase();
+    const desc = (r["Omschrijving"] || "").toLowerCase();
 
-  showSuggestions(matches.slice(0, 5));
-});
+    let score = 0;
+
+    if (name.includes(value)) score += 3;
+    if (desc.includes(value)) score += 2;
+
+    if (name.startsWith(value)) score += 5;
+
+    return { ...r, score };
+  })
+  .filter(r => r.score > 0)
+  .sort((a, b) => b.score - a.score);
+
+showSuggestions(matches.slice(0, 5));
 
 /* DROPDOWN */
 function showSuggestions(list) {
