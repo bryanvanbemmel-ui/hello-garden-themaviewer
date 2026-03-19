@@ -10,18 +10,20 @@ const themeColors = {
 };
 
 let allData = [];
+let currentSuggestions = [];
 
+// DATA LADEN
 fetch("data.json")
   .then(res => res.json())
   .then(data => {
     allData = data;
     console.log("Data geladen");
   })
-  .catch(err => console.error("Fout:", err));
+  .catch(err => console.error(err));
 
 const input = document.getElementById("searchBox");
 
-/* INPUT */
+// INPUT
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
@@ -36,53 +38,46 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
-  showSuggestions(matches.slice(0, 5));
+  currentSuggestions = matches.slice(0, 5);
+
+  showSuggestions(currentSuggestions);
   render(matches.slice(0, 10));
 });
 
-/* DROPDOWN */
+// DROPDOWN
 function showSuggestions(list) {
   const box = document.getElementById("suggestions");
 
-  if (!list || list.length === 0) {
+  if (!list.length) {
     box.innerHTML = "";
     return;
   }
 
-  box.innerHTML = list.map((item, index) => `
-    <div class="suggestion" onclick="selectItem(${index})">
-      <strong>${item["Nederlandse naam"] || ""}</strong><br>
-      <small>${item["Omschrijving"] || ""}</small>
-    </div>
-  `).join("");
-
-  // bewaar lijst tijdelijk
-  window.currentSuggestions = list;
-}
-
-  box.innerHTML = list.map(item => `
-    <div class="suggestion" onclick="selectItem('${(item["Nederlandse naam"] || "").replace(/'/g, "\\'")}', '${(item["Omschrijving"] || "").replace(/'/g, "\\'")}')
-      <strong>${item["Nederlandse naam"] || ""}</strong><br>
-      <small>${item["Omschrijving"] || ""}</small>
+  box.innerHTML = list.map((item, i) => `
+    <div class="suggestion" onclick="selectItem(${i})">
+      <strong>${item["Nederlandse naam"]}</strong><br>
+      <small>${item["Omschrijving"]}</small>
     </div>
   `).join("");
 }
 
-/* SELECT */
+// SELECT (exact 1 item)
 function selectItem(index) {
-  const item = window.currentSuggestions[index];
+  const item = currentSuggestions[index];
 
-  document.getElementById("searchBox").value = item["Nederlandse naam"];
+  document.getElementById("searchBox").value =
+    item["Nederlandse naam"] + " - " + item["Omschrijving"];
+
   document.getElementById("suggestions").innerHTML = "";
 
-  render([item]); // 👈 alleen die ene tonen
+  render([item]); // 👈 ALLEEN DEZE
 }
 
-/* RESULTATEN */
+// RESULTATEN
 function render(list) {
   const container = document.getElementById("results");
 
-  if (!list || list.length === 0) {
+  if (!list.length) {
     container.innerHTML = "<p>Geen resultaat</p>";
     return;
   }
@@ -103,7 +98,7 @@ function render(list) {
   }).join("");
 }
 
-/* CLICK OUTSIDE = CLOSE DROPDOWN */
+// CLICK OUTSIDE = CLOSE
 document.addEventListener("click", (e) => {
   if (!e.target.closest("#searchBox")) {
     document.getElementById("suggestions").innerHTML = "";
