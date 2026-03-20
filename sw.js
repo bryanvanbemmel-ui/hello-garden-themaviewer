@@ -21,8 +21,7 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   if (e.request.url.includes("data.json")) {
-    // altijd nieuwste data ophalen
-    e.respondWith(fetch(e.request));
+    e.respondWith(fetch(e.request)); // altijd nieuwste data
   } else {
     e.respondWith(
       caches.match(e.request).then(res => res || fetch(e.request))
