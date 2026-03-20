@@ -1,6 +1,6 @@
 {
-  "name": "Hello Garden",
-  "short_name": "Garden",
+  "name": "Vaste planten themazoeker",
+  "short_name": "Themazoeker",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#356859",
