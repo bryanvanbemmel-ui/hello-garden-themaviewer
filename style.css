@@ -23,6 +23,9 @@ header p {
   opacity: 0.9;
 }
 
+.center-text {
+  text-align: center;
+}
 /* CONTENT */
 main {
   padding: 20px;
