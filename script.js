@@ -11,6 +11,7 @@ const themeColors = {
 
 let allData = [];
 let currentSuggestions = [];
+let lastDataHash = "";
 
 // DATA LADEN
 fetch("data.json")
@@ -19,13 +20,16 @@ fetch("data.json")
     allData = data;
     console.log("Data geladen");
   })
-  .catch(err => console.error(err));
+  .catch(err => console.error("Fout:", err));
 
 const input = document.getElementById("searchBox");
+const clearBtn = document.getElementById("clearBtn");
 
-// INPUT
+/* INPUT */
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
+
+  clearBtn.style.display = value ? "block" : "none";
 
   if (!value) {
     document.getElementById("suggestions").innerHTML = "";
@@ -44,7 +48,16 @@ input.addEventListener("input", () => {
   render(matches.slice(0, 10));
 });
 
-// DROPDOWN
+/* CLEAR */
+clearBtn.addEventListener("click", () => {
+  input.value = "";
+  document.getElementById("suggestions").innerHTML = "";
+  document.getElementById("results").innerHTML = "";
+  clearBtn.style.display = "none";
+  input.focus();
+});
+
+/* DROPDOWN */
 function showSuggestions(list) {
   const box = document.getElementById("suggestions");
 
@@ -61,19 +74,17 @@ function showSuggestions(list) {
   `).join("");
 }
 
-// SELECT (exact 1 item)
+/* SELECT */
 function selectItem(index) {
   const item = currentSuggestions[index];
 
-  document.getElementById("searchBox").value =
-    item["Nederlandse naam"] + " - " + item["Omschrijving"];
-
+  input.value = item["Nederlandse naam"];
   document.getElementById("suggestions").innerHTML = "";
 
-  render([item]); // 👈 ALLEEN DEZE
+  render([item]);
 }
 
-// RESULTATEN
+/* RESULT */
 function render(list) {
   const container = document.getElementById("results");
 
@@ -83,37 +94,66 @@ function render(list) {
   }
 
   container.innerHTML = list.map(item => {
-    const thema = (item["Thema"] || "Onbekend").trim();
-    const color = themeColors[thema] || "#eee";
+    const color = themeColors[item["Thema"]] || "#eee";
 
     return `
       <div class="card">
         <h2>${item["Nederlandse naam"]}</h2>
         <p>${item["Omschrijving"]}</p>
         <div class="theme" style="background:${color}">
-          ${thema}
+          ${item["Thema"]}
         </div>
       </div>
     `;
   }).join("");
 }
 
-// CLICK OUTSIDE = CLOSE
+/* CLICK OUTSIDE */
 document.addEventListener("click", (e) => {
-  if (!e.target.closest("#searchBox")) {
+  if (!e.target.closest(".search-wrapper")) {
     document.getElementById("suggestions").innerHTML = "";
   }
 });
-const clearBtn = document.getElementById("clearBtn");
 
-input.addEventListener("input", () => {
-  clearBtn.style.display = input.value ? "block" : "none";
-});
+/* SHARE */
+const shareBtn = document.getElementById("shareBtn");
 
-clearBtn.addEventListener("click", () => {
-  input.value = "";
-  document.getElementById("suggestions").innerHTML = "";
-  document.getElementById("results").innerHTML = "";
-  clearBtn.style.display = "none";
-  input.focus();
-});
+if (shareBtn && navigator.share) {
+  shareBtn.addEventListener("click", () => {
+    navigator.share({
+      title: "Hello Garden",
+      text: "Bekijk deze planten tool",
+      url: window.location.href
+    });
+  });
+} else if (shareBtn) {
+  shareBtn.style.display = "none";
+}
+
+/* SERVICE WORKER */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW actief:', reg.scope))
+      .catch(err => console.error('SW fout:', err));
+  });
+}
+
+/* AUTO UPDATE CHECK */
+async function checkForUpdates() {
+  try {
+    const res = await fetch("data.json?cache=" + Date.now());
+    const text = await res.text();
+
+    if (lastDataHash && lastDataHash !== text) {
+      console.log("Nieuwe data gevonden → reload");
+      location.reload();
+    }
+
+    lastDataHash = text;
+  } catch (e) {
+    console.log("Update check fout");
+  }
+}
+
+setInterval(checkForUpdates, 30000);
