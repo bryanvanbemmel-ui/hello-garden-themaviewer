@@ -35,7 +35,9 @@ img {
 
 const BASE_URL = "https://s3-eu-west-1.amazonaws.com/griffioen-portal/";
 
-fetch("/hello-garden-themaviewer/data.json")
+const DATA_URL = "./data.json";
+
+fetch(DATA_URL)
   .then(res => res.json())
   .then(data => {
 
