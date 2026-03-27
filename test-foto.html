@@ -55,7 +55,7 @@ const clean = item["Omschrijving"]
   .replace(/[^a-zA-Z0-9]/g, "");
 
 const imgUrl = BASE_URL + clean + "POTGOLF" + barcode + ".jpg";
-
+console.log("IMG URL:", imgUrl);
 return `
   <div class="card">
     <strong>${item["Nederlandse naam"]}</strong><br>
