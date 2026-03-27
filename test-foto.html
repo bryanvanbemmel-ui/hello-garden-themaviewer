@@ -54,20 +54,20 @@ fetch(DATA_URL)
 const clean = item["Omschrijving"]
   .replace(/[^a-zA-Z0-9]/g, "");
 
-const clean = item["Omschrijving"]
-  .replace(/[^a-zA-Z0-9]/g, "");
+const imgUrl = BASE_URL + clean + "POTGOLF" + barcode + ".jpg";
 
-const imgUrl = BASE_URL + clean + barcode + ".jpg";
+return `
+  <div class="card">
+    <strong>${item["Nederlandse naam"]}</strong><br>
+    ${item["Omschrijving"]}<br>
+    Barcode: ${barcode}<br>
 
-      return `
-        <div class="card">
-          <strong>${item["Nederlandse naam"]}</strong><br>
-          ${item["Omschrijving"]}<br>
-          Barcode: ${barcode}
+    <img src="${imgUrl}"
+         style="max-width:150px"
+         onerror="this.style.border='3px solid red'; this.src=''; this.title='Niet gevonden';">
 
-          <img src="${imgUrl}"
-               onerror="this.style.border='3px solid red'; this.title='Niet gevonden';">
-        </div>
+    <div style="font-size:12px;color:gray">${imgUrl}</div>
+  </div>
       `;
 
     }).join("");
