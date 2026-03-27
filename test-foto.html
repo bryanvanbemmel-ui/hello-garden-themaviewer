@@ -48,7 +48,10 @@ fetch(DATA_URL)
       const barcode = item["Barcode"];
 
       // PROBEER DIRECTE MATCH
-      const imgUrl = BASE_URL + barcode + ".jpg";
+      const clean = item["Omschrijving"]
+  .replace(/[^a-zA-Z0-9]/g, "");
+
+const imgUrl = BASE_URL + clean + barcode + ".jpg";
 
       return `
         <div class="card">
