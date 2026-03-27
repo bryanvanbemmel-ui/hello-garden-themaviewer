@@ -51,6 +51,9 @@ fetch(DATA_URL)
       const clean = item["Omschrijving"]
   .replace(/[^a-zA-Z0-9]/g, "");
 
+const clean = item["Omschrijving"]
+  .replace(/[^a-zA-Z0-9]/g, "");
+
 const imgUrl = BASE_URL + clean + barcode + ".jpg";
 
       return `
