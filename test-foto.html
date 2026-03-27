@@ -42,7 +42,7 @@ fetch("/hello-garden-themaviewer/data.json?nocache=" + Date.now())
 
     console.log("DATA:", data);
 
-    const testData = data.slice(0, 10);
+    const testData = data.slice(0, 40);
 
     document.getElementById("output").innerHTML = testData.map(item => {
 
