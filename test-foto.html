@@ -35,31 +35,6 @@ img {
 
 const BASE_URL = "https://s3-eu-west-1.amazonaws.com/griffioen-portal/";
 
-const DATA_URL = "./data.json";
-
-fetch(DATA_URL)
-  .then(res => res.json())
-  .then(data => {
-
-    const testData = data.slice(0, 10); // eerste 10 testen
-
-    document.getElementById("output").innerHTML = testData.map(item => {
-
-      const barcode = item["Barcode"];
-
-      // PROBEER DIRECTE MATCH
-      const clean = item["Omschrijving"]
-  .replace(/[^a-zA-Z0-9]/g, "");
-
-const clean = item["Omschrijving"]
-  .replace(/[^a-zA-Z0-9]/g, "");
-
-const imgUrl = BASE_URL + clean + "POTGOLF" + barcode + ".jpg";
-console.log("IMG URL:", imgUrl);
-<script>
-
-const BASE_URL = "https://s3-eu-west-1.amazonaws.com/griffioen-portal/";
-
 // 🔥 juiste pad voor GitHub Pages
 fetch("/hello-garden-themaviewer/data.json?nocache=" + Date.now())
   .then(res => res.json())
@@ -107,13 +82,3 @@ fetch("/hello-garden-themaviewer/data.json?nocache=" + Date.now())
   });
 
 </script>
-      `;
-
-    }).join("");
-
-  });
-
-</script>
-
-</body>
-</html>
