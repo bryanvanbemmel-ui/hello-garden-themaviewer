@@ -15,16 +15,19 @@ self.addEventListener("install", e => {
   );
 });
 
-self.addEventListener("activate", e => {
-  e.waitUntil(self.clients.claim());
-});
-
 self.addEventListener("fetch", e => {
-  if (e.request.url.includes("data.json")) {
-    e.respondWith(fetch(e.request)); // altijd nieuwste data
-  } else {
-    e.respondWith(
-      caches.match(e.request).then(res => res || fetch(e.request))
-    );
+
+  const url = new URL(e.request.url);
+
+  // 👉 HTML bestanden ALTIJD direct laden (BELANGRIJK!)
+  if (e.request.destination === "document") {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  // 👉 data.json altijd vers
+  if (url.pathname.endsWith("data.json")) {
+    e.respondWith(fetch(e.request));
+    return;
   }
 });
