@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Foto test</title>
+
+<style>
+body {
+  font-family: Arial;
+  padding: 20px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+img {
+  max-width: 200px;
+  margin-top: 10px;
+  display: block;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Test foto's via barcode</h2>
+
+<div id="output">Laden...</div>
+
+<script>
+
+const BASE_URL = "https://s3-eu-west-1.amazonaws.com/griffioen-portal/";
+
+fetch("data.json")
+  .then(res => res.json())
+  .then(data => {
+
+    const testData = data.slice(0, 10); // eerste 10 testen
+
+    document.getElementById("output").innerHTML = testData.map(item => {
+
+      const barcode = item["Barcode"];
+
+      // PROBEER DIRECTE MATCH
+      const imgUrl = BASE_URL + barcode + ".jpg";
+
+      return `
+        <div class="card">
+          <strong>${item["Nederlandse naam"]}</strong><br>
+          ${item["Omschrijving"]}<br>
+          Barcode: ${barcode}
+
+          <img src="${imgUrl}"
+               onerror="this.style.border='3px solid red'; this.title='Niet gevonden';">
+        </div>
+      `;
+
+    }).join("");
+
+  });
+
+</script>
+
+</body>
+</html>
