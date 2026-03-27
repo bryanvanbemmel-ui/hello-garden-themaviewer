@@ -63,8 +63,8 @@ return `
     Barcode: ${barcode}<br>
 
     <img src="${imgUrl}"
-         style="max-width:150px"
-         onerror="this.style.border='3px solid red'; this.src=''; this.title='Niet gevonden';">
+     style="max-width:150px"
+     onerror="this.onerror=null; this.style.border='3px solid red'; this.src='';">
 
     <div style="font-size:12px;color:gray">${imgUrl}</div>
   </div>
