@@ -1,20 +1,25 @@
 const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 
 let allData = [];
+let currentSuggestions = [];
 
-/* DATA LADEN (GEEN CACHE) */
-fetch("data.json?v=" + Date.now(), { cache: "no-store" })
+/* 🔥 DATA LADEN (JUISTE PAD + GEEN CACHE) */
+fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" })
   .then(res => res.json())
   .then(data => {
     allData = data;
-  });
+    console.log("DATA geladen:", data);
+  })
+  .catch(err => console.error("Fout laden JSON:", err));
 
 const input = document.getElementById("searchBox");
 const clearBtn = document.getElementById("clearBtn");
 const results = document.getElementById("results");
 const suggestions = document.getElementById("suggestions");
 
-/* INPUT */
+/* =======================
+   INPUT
+======================= */
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
@@ -31,10 +36,15 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
+  currentSuggestions = matches.slice(0, 5);
+
+  showSuggestions(currentSuggestions);
   render(matches.slice(0, 10));
 });
 
-/* CLEAR */
+/* =======================
+   CLEAR
+======================= */
 clearBtn.onclick = () => {
   input.value = "";
   results.innerHTML = "";
@@ -42,15 +52,48 @@ clearBtn.onclick = () => {
   clearBtn.style.display = "none";
 };
 
-/* RENDER */
+/* =======================
+   SUGGESTIONS
+======================= */
+function showSuggestions(list) {
+  suggestions.innerHTML = list.map((item, i) => `
+    <div class="suggestion" onclick="selectItem(${i})">
+      <strong>${item["Nederlandse naam"]}</strong><br>
+      <small>${item["Omschrijving"]}</small>
+    </div>
+  `).join("");
+}
+
+/* =======================
+   SELECT
+======================= */
+function selectItem(index) {
+  const item = currentSuggestions[index];
+  input.value = item["Nederlandse naam"];
+  suggestions.innerHTML = "";
+  render([item]);
+}
+
+/* =======================
+   FOTO HELPER (BELANGRIJK)
+======================= */
+function getFoto(item) {
+  let foto = item["Foto"] || item["foto"] || "";
+
+  if (!foto || !foto.startsWith("http")) {
+    return FALLBACK;
+  }
+
+  return foto;
+}
+
+/* =======================
+   RENDER
+======================= */
 function render(list) {
   results.innerHTML = list.map(item => {
 
-    let imgUrl = item["Foto"];
-
-    if (!imgUrl || !imgUrl.startsWith("http")) {
-      imgUrl = FALLBACK;
-    }
+    const imgUrl = getFoto(item);
 
     return `
       <div class="card">
@@ -64,14 +107,16 @@ function render(list) {
              onerror="this.onerror=null; this.src='${FALLBACK}'">
 
         <div class="theme-row">
-          <div class="theme">${item["Thema"]}</div>
+          <div class="theme">${item["Thema"] || ""}</div>
         </div>
       </div>
     `;
   }).join("");
 }
 
-/* LIGHTBOX */
+/* =======================
+   LIGHTBOX
+======================= */
 function openImg(src) {
   document.getElementById("lightbox").style.display = "flex";
   document.getElementById("lightboxImg").src = src;
@@ -80,3 +125,12 @@ function openImg(src) {
 document.getElementById("close").onclick = () => {
   document.getElementById("lightbox").style.display = "none";
 };
+
+/* =======================
+   CLICK OUTSIDE
+======================= */
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-wrapper")) {
+    suggestions.innerHTML = "";
+  }
+});
