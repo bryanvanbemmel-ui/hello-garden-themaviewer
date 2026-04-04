@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Foto test v2</title>
+<title>Foto test</title>
 
 <style>
 body {
@@ -27,58 +27,53 @@ img {
 
 <body>
 
-<h2>Test foto's via barcode</h2>
+<h2>Test foto's via JSON (Excel gestuurd)</h2>
 
 <div id="output">Laden...</div>
 
 <script>
 
-const BASE_URL = "https://s3-eu-west-1.amazonaws.com/griffioen-portal/";
+const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 
-// 🔥 juiste pad voor GitHub Pages
-fetch("/hello-garden-themaviewer/data.json?nocache=" + Date.now())
-  .then(res => res.json())
-  .then(data => {
+// 🔥 JSON laden zonder cache
+fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), {
+  cache: "no-store"
+})
+.then(res => res.json())
+.then(data => {
 
-    console.log("DATA:", data);
+  console.log("DATA:", data);
 
-    const testData = data.slice(0, 40);
+  const testData = data.slice(0, 40);
 
-    document.getElementById("output").innerHTML = testData.map(item => {
+  document.getElementById("output").innerHTML = testData.map(item => {
 
-      const barcode = item["Barcode"];
+    const imgUrl = item["Foto"] || FALLBACK;
 
-      // 🔥 schone naam maken
-      const cleanName = (item["Omschrijving"] || "")
-        .replace(/[^a-zA-Z0-9]/g, "");
+    return `
+      <div class="card">
+        <strong>${item["Nederlandse naam"]}</strong><br>
+        ${item["Omschrijving"]}<br>
+        Barcode: ${item["Barcode"]}<br>
 
-      // 🔥 URL bouwen
-      const imgUrl = BASE_URL + cleanName + "POTGOLF" + barcode + ".jpg";
+        <img src="${imgUrl}"
+             onerror="this.onerror=null; this.src='${FALLBACK}'; this.style.border='3px solid red';">
 
-      console.log("IMG URL:", imgUrl);
-
-      return `
-        <div class="card">
-          <strong>${item["Nederlandse naam"]}</strong><br>
-          ${item["Omschrijving"]}<br>
-          Barcode: ${barcode}<br>
-
-          <img src="${imgUrl}"
-               style="max-width:150px"
-               onerror="this.onerror=null; this.style.border='3px solid red'; this.src='';">
-
-          <div style="font-size:12px;color:gray;word-break:break-all;">
-            ${imgUrl}
-          </div>
+        <div style="font-size:12px;color:gray;word-break:break-all;">
+          ${imgUrl}
         </div>
-      `;
+      </div>
+    `;
 
-    }).join("");
+  }).join("");
 
-  })
-  .catch(err => {
-    document.getElementById("output").innerHTML = "FOUT: " + err;
-    console.error(err);
-  });
+})
+.catch(err => {
+  document.getElementById("output").innerHTML = "FOUT: " + err;
+  console.error(err);
+});
 
 </script>
+
+</body>
+</html>
