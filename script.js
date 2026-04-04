@@ -7,6 +7,7 @@ fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store"
   .then(res => res.json())
   .then(data => {
     allData = data;
+    console.log("NIEUWE SCRIPT ACTIEF");
   });
 
 const input = document.getElementById("searchBox");
@@ -29,13 +30,8 @@ input.addEventListener("input", () => {
   render(matches.slice(0, 10));
 });
 
-/* 🔥 NIEUWE RENDER MET FOTO */
+/* RENDER MET FOTO */
 function render(list) {
-
-  if (!list.length) {
-    results.innerHTML = "<p>Geen resultaat</p>";
-    return;
-  }
 
   results.innerHTML = list.map(item => {
 
@@ -50,9 +46,8 @@ function render(list) {
         <h2>${item["Nederlandse naam"]}</h2>
         <p>${item["Omschrijving"]}</p>
 
-        <!-- 🔥 FOTO -->
         <img src="${imgUrl}"
-             style="width:120px;height:120px;border:2px solid red;margin-top:10px"
+             style="width:120px;height:120px;border:3px solid red;margin-top:10px"
              onerror="this.onerror=null; this.src='${FALLBACK}'">
 
         <div style="margin-top:10px;">
