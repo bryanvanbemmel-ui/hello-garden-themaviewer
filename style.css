@@ -191,3 +191,48 @@ main {
 #clearBtn:hover {
   color: #333;
 }
+/* 🔹 kleine afbeelding bij thema */
+.theme-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin-left: 10px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* 🔹 container thema + icoon */
+.theme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 🔥 LIGHTBOX */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 12px;
+}
+
+#lightboxClose {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
