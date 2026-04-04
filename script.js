@@ -13,33 +13,24 @@ const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 
 let allData = [];
 let currentSuggestions = [];
-let lastDataHash = "";
 
-/* =======================
-   DATA LADEN (NO CACHE)
-======================= */
+/* DATA LADEN */
 fetch("data.json?v=" + Date.now(), { cache: "no-store" })
   .then(res => res.json())
-  .then(data => {
-    allData = data;
-    console.log("Data geladen");
-  })
-  .catch(err => console.error("Fout:", err));
+  .then(data => allData = data);
 
+/* INPUT */
 const input = document.getElementById("searchBox");
 const clearBtn = document.getElementById("clearBtn");
 
-/* =======================
-   INPUT
-======================= */
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
   clearBtn.style.display = value ? "block" : "none";
 
   if (!value) {
-    document.getElementById("suggestions").innerHTML = "";
-    document.getElementById("results").innerHTML = "";
+    suggestions.innerHTML = "";
+    results.innerHTML = "";
     return;
   }
 
@@ -54,29 +45,17 @@ input.addEventListener("input", () => {
   render(matches.slice(0, 10));
 });
 
-/* =======================
-   CLEAR
-======================= */
+/* CLEAR */
 clearBtn.addEventListener("click", () => {
   input.value = "";
-  document.getElementById("suggestions").innerHTML = "";
-  document.getElementById("results").innerHTML = "";
+  suggestions.innerHTML = "";
+  results.innerHTML = "";
   clearBtn.style.display = "none";
-  input.focus();
 });
 
-/* =======================
-   SUGGESTIONS
-======================= */
+/* SUGGESTIONS */
 function showSuggestions(list) {
-  const box = document.getElementById("suggestions");
-
-  if (!list.length) {
-    box.innerHTML = "";
-    return;
-  }
-
-  box.innerHTML = list.map((item, i) => `
+  suggestions.innerHTML = list.map((item, i) => `
     <div class="suggestion" onclick="selectItem(${i})">
       <strong>${item["Nederlandse naam"]}</strong><br>
       <small>${item["Omschrijving"]}</small>
@@ -84,33 +63,24 @@ function showSuggestions(list) {
   `).join("");
 }
 
-/* =======================
-   SELECT
-======================= */
+/* SELECT */
 function selectItem(index) {
   const item = currentSuggestions[index];
-
   input.value = item["Nederlandse naam"];
-  document.getElementById("suggestions").innerHTML = "";
-
+  suggestions.innerHTML = "";
   render([item]);
 }
 
-/* =======================
-   RENDER RESULT (MET FOTO)
-======================= */
+/* RENDER */
 function render(list) {
-  const container = document.getElementById("results");
-
-  if (!list.length) {
-    container.innerHTML = "<p>Geen resultaat</p>";
-    return;
-  }
-
-  container.innerHTML = list.map(item => {
+  results.innerHTML = list.map(item => {
 
     const color = themeColors[item["Thema"]] || "#eee";
-    const imgUrl = item["Foto"] || FALLBACK;
+    let imgUrl = item["Foto"];
+
+    if (!imgUrl || !imgUrl.startsWith("http")) {
+      imgUrl = FALLBACK;
+    }
 
     return `
       <div class="card">
@@ -132,90 +102,16 @@ function render(list) {
   }).join("");
 }
 
-/* =======================
-   LIGHTBOX
-======================= */
+/* LIGHTBOX */
 function openLightbox(src) {
-  const lightbox = document.getElementById("lightbox");
-  const img = document.getElementById("lightboxImg");
-
-  img.src = src || FALLBACK;
   lightbox.style.display = "flex";
+  lightboxImg.src = src;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+lightboxClose.onclick = () => lightbox.style.display = "none";
 
-  const closeBtn = document.getElementById("lightboxClose");
-  const lightbox = document.getElementById("lightbox");
-
-  if (closeBtn) {
-    closeBtn.onclick = () => lightbox.style.display = "none";
+lightbox.onclick = (e) => {
+  if (e.target.id === "lightbox") {
+    lightbox.style.display = "none";
   }
-
-  if (lightbox) {
-    lightbox.onclick = (e) => {
-      if (e.target.id === "lightbox") {
-        lightbox.style.display = "none";
-      }
-    };
-  }
-
-});
-
-/* =======================
-   CLICK OUTSIDE
-======================= */
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".search-wrapper")) {
-    document.getElementById("suggestions").innerHTML = "";
-  }
-});
-
-/* =======================
-   SHARE
-======================= */
-const shareBtn = document.getElementById("shareBtn");
-
-if (shareBtn && navigator.share) {
-  shareBtn.addEventListener("click", () => {
-    navigator.share({
-      title: "Hello Garden",
-      text: "Bekijk deze planten tool",
-      url: window.location.href
-    });
-  });
-} else if (shareBtn) {
-  shareBtn.style.display = "none";
-}
-
-/* =======================
-   SERVICE WORKER
-======================= */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW actief:', reg.scope))
-      .catch(err => console.error('SW fout:', err));
-  });
-}
-
-/* =======================
-   AUTO UPDATE JSON
-======================= */
-async function checkForUpdates() {
-  try {
-    const res = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
-    const text = await res.text();
-
-    if (lastDataHash && lastDataHash !== text) {
-      console.log("Nieuwe data gevonden → reload");
-      location.reload();
-    }
-
-    lastDataHash = text;
-  } catch (e) {
-    console.log("Update check fout");
-  }
-}
-
-setInterval(checkForUpdates, 30000);
+};
