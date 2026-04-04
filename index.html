@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vaste planten – Themazoeker</title>
+
   <link rel="stylesheet" href="style.css">
-  
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#356859">
-  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#356859">
 </head>
 
 <body>
@@ -20,25 +18,29 @@
 </header>
 
 <main>
- <div class="search-wrapper">
-  <input id="searchBox" type="text" placeholder="Zoek plant..." autocomplete="off">
-  <span id="clearBtn">✖</span>
-</div>
+
+  <div class="search-wrapper">
+    <input id="searchBox" type="text" placeholder="Zoek plant..." autocomplete="off">
+    <span id="clearBtn">✖</span>
+  </div>
 
   <div id="suggestions"></div>
   <div id="results"></div>
-  
-<footer class="app-footer">
-  <p>Tool gemaakt door BvB v2</p>
-  <button id="shareBtn">📤 Deel deze tool</button>
-</footer>
-  
+
+  <footer class="app-footer">
+    <p>Tool gemaakt door BvB</p>
+    <button id="shareBtn">📤 Deel deze tool</button>
+  </footer>
+
 </main>
 
-<script src="script.js"></script>
- <div id="lightbox" class="lightbox">
+<!-- 🔥 LIGHTBOX -->
+<div id="lightbox" class="lightbox">
   <span id="lightboxClose">✖</span>
   <img id="lightboxImg" src="">
 </div>
+
+<script src="script.js"></script>
+
 </body>
 </html>
