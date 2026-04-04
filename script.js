@@ -1,84 +1,60 @@
 const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 
 let allData = [];
-let currentSuggestions = [];
 
-/* 🔥 DATA LADEN (JUISTE PAD + GEEN CACHE) */
-fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" })
-  .then(res => res.json())
-  .then(data => {
+/* 🔥 DATA LADEN (MEERDERE POGINGEN) */
+async function loadData() {
+  try {
+    // poging 1 (GitHub pages pad)
+    let res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" });
+
+    if (!res.ok) {
+      // poging 2 (relatief)
+      res = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
+    }
+
+    const data = await res.json();
+
     allData = data;
-    console.log("DATA geladen:", data);
-  })
-  .catch(err => console.error("Fout laden JSON:", err));
+    console.log("DATA OK:", data);
+
+  } catch (e) {
+    console.error("JSON laad fout:", e);
+    alert("JSON wordt niet geladen!");
+  }
+}
+
+loadData();
 
 const input = document.getElementById("searchBox");
-const clearBtn = document.getElementById("clearBtn");
 const results = document.getElementById("results");
-const suggestions = document.getElementById("suggestions");
 
-/* =======================
-   INPUT
-======================= */
+/* INPUT */
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
-  clearBtn.style.display = value ? "block" : "none";
-
   if (!value) {
     results.innerHTML = "";
-    suggestions.innerHTML = "";
     return;
   }
 
   const matches = allData.filter(r =>
-    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
-    (r["Omschrijving"] || "").toLowerCase().includes(value)
+    JSON.stringify(r).toLowerCase().includes(value)
   );
 
-  currentSuggestions = matches.slice(0, 5);
-
-  showSuggestions(currentSuggestions);
   render(matches.slice(0, 10));
 });
 
-/* =======================
-   CLEAR
-======================= */
-clearBtn.onclick = () => {
-  input.value = "";
-  results.innerHTML = "";
-  suggestions.innerHTML = "";
-  clearBtn.style.display = "none";
-};
-
-/* =======================
-   SUGGESTIONS
-======================= */
-function showSuggestions(list) {
-  suggestions.innerHTML = list.map((item, i) => `
-    <div class="suggestion" onclick="selectItem(${i})">
-      <strong>${item["Nederlandse naam"]}</strong><br>
-      <small>${item["Omschrijving"]}</small>
-    </div>
-  `).join("");
-}
-
-/* =======================
-   SELECT
-======================= */
-function selectItem(index) {
-  const item = currentSuggestions[index];
-  input.value = item["Nederlandse naam"];
-  suggestions.innerHTML = "";
-  render([item]);
-}
-
-/* =======================
-   FOTO HELPER (BELANGRIJK)
-======================= */
+/* 🔥 FOTO HELPER (ULTRA ROBUUST) */
 function getFoto(item) {
-  let foto = item["Foto"] || item["foto"] || "";
+  let foto =
+    item["Foto"] ||
+    item["foto"] ||
+    item["Foto "] ||
+    item["image"] ||
+    "";
+
+  console.log("FOTO VALUE:", foto);
 
   if (!foto || !foto.startsWith("http")) {
     return FALLBACK;
@@ -87,36 +63,42 @@ function getFoto(item) {
   return foto;
 }
 
-/* =======================
-   RENDER
-======================= */
+/* 🔥 RENDER (MET DEBUG) */
 function render(list) {
+
+  if (!list.length) {
+    results.innerHTML = "<p>Geen resultaat</p>";
+    return;
+  }
+
   results.innerHTML = list.map(item => {
 
     const imgUrl = getFoto(item);
 
     return `
       <div class="card">
-        <h2>${item["Nederlandse naam"]}</h2>
-        <p>${item["Omschrijving"]}</p>
+        <h2>${item["Nederlandse naam"] || ""}</h2>
+        <p>${item["Omschrijving"] || ""}</p>
 
-        <!-- 🔥 FOTO -->
+        <!-- 🔥 FOTO (GROOT + ZICHTBAAR) -->
         <img src="${imgUrl}"
-             style="width:120px;height:120px;border:2px solid #ccc;margin-top:10px"
+             style="width:150px;height:150px;border:3px solid red;margin-top:10px"
              onclick="openImg('${imgUrl}')"
-             onerror="this.onerror=null; this.src='${FALLBACK}'">
+             onerror="this.onerror=null; this.src='${FALLBACK}'; this.style.border='3px solid blue'">
 
-        <div class="theme-row">
-          <div class="theme">${item["Thema"] || ""}</div>
+        <div style="font-size:10px;word-break:break-all;">
+          ${imgUrl}
+        </div>
+
+        <div style="margin-top:10px;">
+          ${item["Thema"] || ""}
         </div>
       </div>
     `;
   }).join("");
 }
 
-/* =======================
-   LIGHTBOX
-======================= */
+/* LIGHTBOX */
 function openImg(src) {
   document.getElementById("lightbox").style.display = "flex";
   document.getElementById("lightboxImg").src = src;
@@ -125,12 +107,3 @@ function openImg(src) {
 document.getElementById("close").onclick = () => {
   document.getElementById("lightbox").style.display = "none";
 };
-
-/* =======================
-   CLICK OUTSIDE
-======================= */
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".search-wrapper")) {
-    suggestions.innerHTML = "";
-  }
-});
