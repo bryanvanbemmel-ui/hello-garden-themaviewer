@@ -19,15 +19,23 @@ self.addEventListener("fetch", e => {
 
   const url = new URL(e.request.url);
 
-  // 👉 HTML bestanden ALTIJD direct laden (BELANGRIJK!)
+  // 👉 data.json NOOIT cachen (belangrijk!)
+  if (url.pathname.endsWith("data.json")) {
+    e.respondWith(
+      fetch(e.request, { cache: "no-store" })
+    );
+    return;
+  }
+
+  // 👉 HTML ook niet cachen (anders blijf je hangen)
   if (e.request.destination === "document") {
     e.respondWith(fetch(e.request));
     return;
   }
 
-  // 👉 data.json altijd vers
-  if (url.pathname.endsWith("data.json")) {
-    e.respondWith(fetch(e.request));
-    return;
-  }
+  // 👉 rest mag cache gebruiken
+  e.respondWith(
+    caches.match(e.request).then(res => res || fetch(e.request))
+  );
+
 });
