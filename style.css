@@ -1,214 +1,61 @@
-/* BASIS */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  background: #f3f4f6;
-  color: #111;
-}
-
-/* HEADER */
-header {
-  background: #356859;
-  color: white;
-  padding: 20px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 24px;
-}
-
-header p {
-  margin-top: 5px;
-  opacity: 0.9;
+  font-family: Arial;
+  padding: 10px;
 }
 
 .center-text {
   text-align: center;
 }
-/* CONTENT */
-main {
-  padding: 20px;
-  max-width: 900px;
-  margin: auto;
-}
 
-/* INPUT */
-#searchBox {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  border: 2px solid #ddd;
-  font-size: 16px;
-  outline: none;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-}
-
-#searchBox:focus {
-  border-color: #356859;
-}
-
-/* DROPDOWN */
-#suggestions {
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  overflow: hidden;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.suggestion {
-  padding: 12px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-}
-
-.suggestion:last-child {
-  border-bottom: none;
-}
-
-.suggestion:hover {
-  background: #f3f4f6;
-}
-
-.suggestion strong {
-  display: block;
-  font-size: 15px;
-}
-
-.suggestion small {
-  color: #666;
-}
-
-/* RESULTATEN */
-#results {
-  margin-top: 10px;
-}
-
-/* CARD */
-.card {
-  background: white;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-}
-
-/* TITEL */
-.card h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-/* OMSCHRIJVING */
-.card p {
-  margin: 6px 0;
-  color: #555;
-}
-
-/* THEMA */
-.theme {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  display: inline-block;
-  font-weight: bold;
-}
-
-/* MOBIEL */
-@media (max-width: 600px) {
-  header {
-    padding: 15px;
-  }
-
-  header h1 {
-    font-size: 20px;
-  }
-
-  main {
-    padding: 15px;
-  }
-
-  #searchBox {
-    font-size: 18px;
-    padding: 18px;
-  }
-
-  .card h2 {
-    font-size: 18px;
-  }
-}
 .search-wrapper {
   position: relative;
-  width: 100%;
-  max-width: 700px;
 }
 
 #searchBox {
   width: 100%;
-  padding: 16px;
-  padding-right: 40px; /* ruimte voor kruisje */
-  border-radius: 14px;
-  border: 2px solid #ddd;
+  padding: 10px;
   font-size: 16px;
-  box-sizing: border-box;
 }
 
 #clearBtn {
   position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 10px;
+  top: 10px;
   cursor: pointer;
-  font-size: 16px;
-  color: #999;
   display: none;
-  user-select: none;
-}
-.app-footer {
-  margin-top: 30px;
-  text-align: center;
-  padding: 20px;
-  color: #666;
 }
 
-#shareBtn {
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
   margin-top: 10px;
-  padding: 10px 14px;
   border-radius: 10px;
-  border: none;
-  background: #356859;
-  color: white;
-  cursor: pointer;
 }
 
-#shareBtn:hover {
-  background: #2c5448;
-}
-
-#clearBtn:hover {
-  color: #333;
-}
-/* 🔹 kleine afbeelding bij thema */
-.theme-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  margin-left: 10px;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-/* 🔹 container thema + icoon */
+/* THEMA + FOTO */
 .theme-row {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-top: 10px;
 }
 
-/* 🔥 LIGHTBOX */
+.theme {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.theme-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* LIGHTBOX */
 .lightbox {
   display: none;
   position: fixed;
