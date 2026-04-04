@@ -9,12 +9,16 @@ const themeColors = {
   "Wild & Inheems": "#DEC089"
 };
 
+const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
+
 let allData = [];
 let currentSuggestions = [];
 let lastDataHash = "";
 
-// DATA LADEN
-fetch("data.json")
+/* =======================
+   DATA LADEN (NO CACHE)
+======================= */
+fetch("data.json?v=" + Date.now(), { cache: "no-store" })
   .then(res => res.json())
   .then(data => {
     allData = data;
@@ -25,7 +29,9 @@ fetch("data.json")
 const input = document.getElementById("searchBox");
 const clearBtn = document.getElementById("clearBtn");
 
-/* INPUT */
+/* =======================
+   INPUT
+======================= */
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase();
 
@@ -48,7 +54,9 @@ input.addEventListener("input", () => {
   render(matches.slice(0, 10));
 });
 
-/* CLEAR */
+/* =======================
+   CLEAR
+======================= */
 clearBtn.addEventListener("click", () => {
   input.value = "";
   document.getElementById("suggestions").innerHTML = "";
@@ -57,7 +65,9 @@ clearBtn.addEventListener("click", () => {
   input.focus();
 });
 
-/* DROPDOWN */
+/* =======================
+   SUGGESTIONS
+======================= */
 function showSuggestions(list) {
   const box = document.getElementById("suggestions");
 
@@ -74,7 +84,9 @@ function showSuggestions(list) {
   `).join("");
 }
 
-/* SELECT */
+/* =======================
+   SELECT
+======================= */
 function selectItem(index) {
   const item = currentSuggestions[index];
 
@@ -84,7 +96,9 @@ function selectItem(index) {
   render([item]);
 }
 
-/* RESULT */
+/* =======================
+   RENDER RESULT (MET FOTO)
+======================= */
 function render(list) {
   const container = document.getElementById("results");
 
@@ -94,28 +108,72 @@ function render(list) {
   }
 
   container.innerHTML = list.map(item => {
+
     const color = themeColors[item["Thema"]] || "#eee";
+    const imgUrl = item["Foto"] || FALLBACK;
 
     return `
       <div class="card">
         <h2>${item["Nederlandse naam"]}</h2>
         <p>${item["Omschrijving"]}</p>
-        <div class="theme" style="background:${color}">
-          ${item["Thema"]}
+
+        <div class="theme-row">
+          <div class="theme" style="background:${color}">
+            ${item["Thema"]}
+          </div>
+
+          <img src="${imgUrl}"
+               class="theme-img"
+               onclick="openLightbox('${imgUrl}')"
+               onerror="this.onerror=null; this.src='${FALLBACK}'">
         </div>
       </div>
     `;
   }).join("");
 }
 
-/* CLICK OUTSIDE */
+/* =======================
+   LIGHTBOX
+======================= */
+function openLightbox(src) {
+  const lightbox = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+
+  img.src = src || FALLBACK;
+  lightbox.style.display = "flex";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const closeBtn = document.getElementById("lightboxClose");
+  const lightbox = document.getElementById("lightbox");
+
+  if (closeBtn) {
+    closeBtn.onclick = () => lightbox.style.display = "none";
+  }
+
+  if (lightbox) {
+    lightbox.onclick = (e) => {
+      if (e.target.id === "lightbox") {
+        lightbox.style.display = "none";
+      }
+    };
+  }
+
+});
+
+/* =======================
+   CLICK OUTSIDE
+======================= */
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".search-wrapper")) {
     document.getElementById("suggestions").innerHTML = "";
   }
 });
 
-/* SHARE */
+/* =======================
+   SHARE
+======================= */
 const shareBtn = document.getElementById("shareBtn");
 
 if (shareBtn && navigator.share) {
@@ -130,7 +188,9 @@ if (shareBtn && navigator.share) {
   shareBtn.style.display = "none";
 }
 
-/* SERVICE WORKER */
+/* =======================
+   SERVICE WORKER
+======================= */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
@@ -139,10 +199,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-/* AUTO UPDATE CHECK */
+/* =======================
+   AUTO UPDATE JSON
+======================= */
 async function checkForUpdates() {
   try {
-    const res = await fetch("data.json?cache=" + Date.now());
+    const res = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
     const text = await res.text();
 
     if (lastDataHash && lastDataHash !== text) {
