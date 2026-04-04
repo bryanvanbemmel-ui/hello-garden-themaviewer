@@ -5,10 +5,7 @@ let allData = [];
 /* DATA LADEN */
 fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" })
   .then(res => res.json())
-  .then(data => {
-    allData = data;
-    console.log("NIEUWE SCRIPT ACTIEF");
-  });
+  .then(data => allData = data);
 
 const input = document.getElementById("searchBox");
 const results = document.getElementById("results");
@@ -27,33 +24,77 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
-  render(matches.slice(0, 10));
+  renderList(matches.slice(0, 10));
 });
 
-/* RENDER MET FOTO */
-function render(list) {
+/* =======================
+   LIJST (ZONDER FOTO)
+======================= */
+function renderList(list) {
 
-  results.innerHTML = list.map(item => {
-
-    let imgUrl = item["Foto"];
-
-    if (!imgUrl || !imgUrl.startsWith("http")) {
-      imgUrl = FALLBACK;
-    }
+  results.innerHTML = list.map((item, index) => {
 
     return `
-      <div class="card">
+      <div class="card" onclick="openDetail(${index})">
         <h2>${item["Nederlandse naam"]}</h2>
         <p>${item["Omschrijving"]}</p>
 
-        <img src="${imgUrl}"
-             style="width:120px;height:120px;border:3px solid red;margin-top:10px"
-             onerror="this.onerror=null; this.src='${FALLBACK}'">
-
-        <div style="margin-top:10px;">
-          ${item["Thema"]}
-        </div>
+        <div class="theme">${item["Thema"] || ""}</div>
       </div>
     `;
   }).join("");
+
+  window.currentList = list;
 }
+
+/* =======================
+   DETAIL MET FOTO
+======================= */
+function openDetail(index) {
+
+  const item = window.currentList[index];
+
+  let imgUrl = item["Foto"];
+  if (!imgUrl || !imgUrl.startsWith("http")) {
+    imgUrl = FALLBACK;
+  }
+
+  results.innerHTML = `
+    <div class="card">
+      <button onclick="goBack()">⬅ Terug</button>
+
+      <h2>${item["Nederlandse naam"]}</h2>
+      <p>${item["Omschrijving"]}</p>
+
+      <img src="${imgUrl}"
+           style="width:100%;max-width:400px;margin-top:10px;border-radius:10px"
+           onclick="openLightbox('${imgUrl}')"
+           onerror="this.src='${FALLBACK}'">
+
+      <div style="margin-top:10px;">
+        ${item["Thema"] || ""}
+      </div>
+    </div>
+  `;
+}
+
+/* TERUG NAAR LIJST */
+function goBack() {
+  renderList(window.currentList);
+}
+
+/* =======================
+   LIGHTBOX (GROTE FOTO)
+======================= */
+function openLightbox(src) {
+  const box = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+
+  img.src = src;
+  box.style.display = "flex";
+}
+
+/* SLUITEN */
+document.getElementById("lightbox").onclick = () => {
+  document.getElementById("lightbox").style.display = "none";
+};
