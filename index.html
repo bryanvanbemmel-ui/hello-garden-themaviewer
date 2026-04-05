@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vaste planten – Themazoeker</title>
 
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=10">
 
   <!-- PWA -->
-<link rel="manifest" href="/hello-garden-themaviewer/manifest.json">
-<meta name="theme-color" content="#356859">
-<link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="/hello-garden-themaviewer/manifest.json">
+  <meta name="theme-color" content="#356859">
+  <link rel="apple-touch-icon" href="icon.png">
 </head>
 
 <body>
@@ -27,31 +27,34 @@
     <span id="clearBtn">✖</span>
   </div>
 
+  <div id="suggestions"></div>
   <div id="results"></div>
 
   <footer class="app-footer">
     <p>Tool gemaakt door BvB</p>
+
+    <!-- 🔥 INSTALL KNOP -->
+    <button id="installBtn" style="display:none;">📲 Installeer app</button>
+
     <button id="shareBtn">📤 Deel deze tool</button>
-    <p class="version">v1.2</p>
+    <p class="version">v1.3</p>
   </footer>
 
 </main>
 
-<!-- LIGHTBOX -->
 <div id="lightbox">
   <img id="lightboxImg">
 </div>
 
-<script src="script.js?v=7"></script>
+<script src="script.js?v=10"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/hello-garden-themaviewer/sw.js?v=3')
-      .then(() => console.log("SW actief"))
-      .catch(err => console.log("SW fout", err));
+    navigator.serviceWorker.register('/hello-garden-themaviewer/sw.js?v=4');
   });
 }
 </script>
+
 </body>
 </html>
