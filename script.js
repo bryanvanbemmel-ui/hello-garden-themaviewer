@@ -5,7 +5,7 @@ let currentList = [];
 let lastDataString = "";
 let deferredPrompt = null;
 
-/* THEMA ICONEN */
+/* 🔥 THEMA ICONEN */
 const themeIcons = {
   "Bijen- en vlinderlokkers": "🐝",
   "Bodembedekkend": "🌿",
@@ -15,6 +15,18 @@ const themeIcons = {
   "Grassen": "🌾",
   "Kruiden": "🍃",
   "Wild & Inheems": "🌼"
+};
+
+/* 🔥 THEMA KLEUREN (NIEUW) */
+const themeColors = {
+  "Bijen- en vlinderlokkers": "#FEE191",
+  "Bodembedekkend": "#B5D99C",
+  "Geurend": "#FFD7E6",
+  "Schaduw": "#C2C9E8",
+  "Specials": "#C1B2FF",
+  "Grassen": "#B0D0D3",
+  "Kruiden": "#C9E0A5",
+  "Wild & Inheems": "#DEC089"
 };
 
 /* ELEMENTEN */
@@ -42,9 +54,8 @@ if (installBtn) {
   };
 }
 
-/* 🔥 SHARE (PERFECT BALANCE) */
+/* SHARE */
 window.addEventListener("load", () => {
-
   const shareBtn = document.getElementById("shareBtn");
   if (!shareBtn) return;
 
@@ -60,10 +71,9 @@ window.addEventListener("load", () => {
       try {
         await navigator.share(shareData);
         return;
-      } catch (err) {}
+      } catch {}
     }
 
-    // fallback
     try {
       await navigator.clipboard.writeText(window.location.href);
       alert("Link gekopieerd 👍");
@@ -71,7 +81,6 @@ window.addEventListener("load", () => {
       prompt("Kopieer deze link:", window.location.href);
     }
   };
-
 });
 
 /* DATA */
@@ -88,7 +97,7 @@ async function loadData() {
     lastDataString = text;
     allData = JSON.parse(text);
 
-  } catch (e) {}
+  } catch {}
 }
 
 loadData();
@@ -127,29 +136,34 @@ function getFoto(item) {
   return (!url || !url.startsWith("http")) ? FALLBACK : url;
 }
 
-/* RENDER */
+/* 🔥 RENDER (INLINE KLEUR = FIX) */
 function render(list) {
-  results.innerHTML = list.map((item, index) => `
-    <div class="card" onclick="openDetail(${index})">
+  results.innerHTML = list.map((item, index) => {
+    const color = themeColors[item["Thema"]] || "#eee";
 
-      <img src="${getFoto(item)}" class="card-img">
+    return `
+      <div class="card" onclick="openDetail(${index})">
 
-      <div class="card-content">
-        <h2>${item["Nederlandse naam"]}</h2>
-        <p>${item["Omschrijving"]}</p>
+        <img src="${getFoto(item)}" class="card-img">
 
-        <div class="theme">
-          ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
+        <div class="card-content">
+          <h2>${item["Nederlandse naam"]}</h2>
+          <p>${item["Omschrijving"]}</p>
+
+          <div class="theme" style="background:${color}">
+            ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
+          </div>
         </div>
-      </div>
 
-    </div>
-  `).join("");
+      </div>
+    `;
+  }).join("");
 }
 
 /* DETAIL */
 function openDetail(index) {
   const item = currentList[index];
+  const color = themeColors[item["Thema"]] || "#eee";
 
   results.innerHTML = `
     <div class="card" style="flex-direction:column;">
@@ -160,7 +174,7 @@ function openDetail(index) {
 
       <img src="${getFoto(item)}" class="detail-img">
 
-      <div class="theme">
+      <div class="theme" style="background:${color}">
         ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
       </div>
     </div>
