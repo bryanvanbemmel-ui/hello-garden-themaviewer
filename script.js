@@ -5,7 +5,7 @@ let currentList = [];
 let lastDataString = "";
 let deferredPrompt = null;
 
-/* 🔥 VOLLEDIGE THEMA ICONEN */
+/* THEMA ICONEN */
 const themeIcons = {
   "Bijen- en vlinderlokkers": "🐝",
   "Bodembedekkend": "🌿",
@@ -22,8 +22,9 @@ const input = document.getElementById("searchBox");
 const clearBtn = document.getElementById("clearBtn");
 const results = document.getElementById("results");
 const installBtn = document.getElementById("installBtn");
+const shareBtn = document.getElementById("shareBtn");
 
-/* 🔥 INSTALL KNOP */
+/* 🔥 INSTALL */
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -40,7 +41,20 @@ installBtn.onclick = async () => {
   installBtn.style.display = "none";
 };
 
-/* 🔥 DATA LADEN */
+/* 🔥 SHARE (FIX) */
+if (shareBtn && navigator.share) {
+  shareBtn.onclick = () => {
+    navigator.share({
+      title: "Vaste planten – Themazoeker",
+      text: "Bekijk deze planten tool",
+      url: window.location.href
+    });
+  };
+} else if (shareBtn) {
+  shareBtn.style.display = "none";
+}
+
+/* 🔄 DATA */
 async function loadData() {
   const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
   const text = await res.text();
@@ -90,7 +104,7 @@ function getFoto(item) {
   return (!url || !url.startsWith("http")) ? FALLBACK : url;
 }
 
-/* 🔥 RENDER */
+/* RENDER */
 function render(list) {
   results.innerHTML = list.map((item, index) => `
     <div class="card" onclick="openDetail(${index})">
