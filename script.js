@@ -5,12 +5,16 @@ let currentList = [];
 let lastDataString = "";
 let deferredPrompt = null;
 
-/* ICONEN */
+/* 🔥 VOLLEDIGE THEMA ICONEN */
 const themeIcons = {
+  "Bijen- en vlinderlokkers": "🐝",
+  "Bodembedekkend": "🌿",
+  "Geurend": "🌸",
+  "Schaduw": "🌑",
+  "Specials": "⭐",
   "Grassen": "🌾",
   "Kruiden": "🍃",
-  "Schaduw": "🌑",
-  "Bijen- en vlinderlokkers": "🐝"
+  "Wild & Inheems": "🌼"
 };
 
 /* ELEMENTEN */
@@ -19,27 +23,24 @@ const clearBtn = document.getElementById("clearBtn");
 const results = document.getElementById("results");
 const installBtn = document.getElementById("installBtn");
 
-/* 🔥 INSTALL EVENT */
+/* 🔥 INSTALL KNOP */
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   installBtn.style.display = "inline-block";
 });
 
-/* INSTALL CLICK */
 installBtn.onclick = async () => {
   if (!deferredPrompt) return;
 
   deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-
-  console.log(choice.outcome);
+  await deferredPrompt.userChoice;
 
   deferredPrompt = null;
   installBtn.style.display = "none";
 };
 
-/* DATA LADEN */
+/* 🔥 DATA LADEN */
 async function loadData() {
   const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
   const text = await res.text();
@@ -89,7 +90,7 @@ function getFoto(item) {
   return (!url || !url.startsWith("http")) ? FALLBACK : url;
 }
 
-/* RENDER */
+/* 🔥 RENDER */
 function render(list) {
   results.innerHTML = list.map((item, index) => `
     <div class="card" onclick="openDetail(${index})">
@@ -101,7 +102,7 @@ function render(list) {
         <p>${item["Omschrijving"]}</p>
 
         <div class="theme" data-theme="${item["Thema"]}">
-          ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
+          ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
         </div>
       </div>
 
@@ -122,7 +123,9 @@ function openDetail(index) {
 
       <img src="${getFoto(item)}" class="detail-img">
 
-      <div class="theme">${item["Thema"]}</div>
+      <div class="theme" data-theme="${item["Thema"]}">
+        ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
+      </div>
     </div>
   `;
 }
