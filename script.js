@@ -1,43 +1,89 @@
 const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 
 let allData = [];
+let currentSuggestions = [];
 let currentList = [];
+let lastDataString = "";
 
 /* THEMA ICONEN */
 const themeIcons = {
+  "Bijen- en vlinderlokkers": "🐝",
+  "Bodembedekkend": "🌿",
+  "Geurend": "🌸",
+  "Schaduw": "🌑",
+  "Specials": "⭐",
   "Grassen": "🌾",
   "Kruiden": "🍃",
-  "Schaduw": "🌑",
-  "Bijen- en vlinderlokkers": "🐝"
+  "Wild & Inheems": "🌼"
 };
 
-/* 🔥 DATA LADEN (ONLINE + OFFLINE) */
+/* 🔥 UPDATE BALK */
+function showUpdateBar() {
+  if (document.getElementById("updateBar")) return;
+
+  const bar = document.createElement("div");
+  bar.id = "updateBar";
+  bar.innerHTML = `
+    <span>🔄 Nieuwe data beschikbaar</span>
+    <button onclick="location.reload()">Nu verversen</button>
+  `;
+
+  Object.assign(bar.style, {
+    position: "fixed",
+    bottom: "20px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "#356859",
+    color: "#fff",
+    padding: "12px 16px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+    zIndex: 9999
+  });
+
+  document.body.appendChild(bar);
+
+  // 🔥 AUTO REFRESH NA 10 SEC
+  setTimeout(() => {
+    location.reload();
+  }, 10000);
+}
+
+/* 🔥 DATA LADEN */
 async function loadData() {
   try {
-    const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
-    const data = await res.json();
+    const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), {
+      cache: "no-store"
+    });
 
-    localStorage.setItem("plantData", JSON.stringify(data));
+    const text = await res.text();
 
-    console.log("ONLINE DATA");
-    return data;
+    if (lastDataString && lastDataString !== text) {
+      console.log("🔄 Nieuwe data gevonden");
+      showUpdateBar();
+      return;
+    }
+
+    lastDataString = text;
+    allData = JSON.parse(text);
 
   } catch (e) {
-    console.log("OFFLINE DATA");
-
-    const local = localStorage.getItem("plantData");
-    return local ? JSON.parse(local) : [];
+    console.log("offline");
   }
 }
 
-loadData().then(data => {
-  allData = data;
-});
+/* INIT */
+loadData();
+
+/* 🔁 CHECK ELKE 30 SEC */
+setInterval(loadData, 30000);
 
 /* ELEMENTEN */
 const input = document.getElementById("searchBox");
 const clearBtn = document.getElementById("clearBtn");
-const results = document.getElementById("results");
 
 /* INPUT */
 input.addEventListener("input", () => {
@@ -46,7 +92,8 @@ input.addEventListener("input", () => {
   clearBtn.style.display = value ? "block" : "none";
 
   if (!value) {
-    results.innerHTML = "";
+    document.getElementById("suggestions").innerHTML = "";
+    document.getElementById("results").innerHTML = "";
     return;
   }
 
@@ -55,28 +102,68 @@ input.addEventListener("input", () => {
     (r["Omschrijving"] || "").toLowerCase().includes(value)
   );
 
-  renderList(matches.slice(0, 10));
+  currentSuggestions = matches.slice(0, 5);
+  currentList = matches;
+
+  showSuggestions(currentSuggestions);
+  render(matches.slice(0, 10));
 });
 
 /* CLEAR */
-clearBtn.onclick = () => {
+clearBtn.addEventListener("click", () => {
   input.value = "";
-  results.innerHTML = "";
+  document.getElementById("suggestions").innerHTML = "";
+  document.getElementById("results").innerHTML = "";
   clearBtn.style.display = "none";
-};
+  input.focus();
+});
+
+/* DROPDOWN */
+function showSuggestions(list) {
+  const box = document.getElementById("suggestions");
+
+  if (!list.length) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = list.map((item, i) => `
+    <div class="suggestion" onclick="selectItem(${i})">
+      <strong>${item["Nederlandse naam"]}</strong><br>
+      <small>${item["Omschrijving"]}</small>
+    </div>
+  `).join("");
+}
+
+/* SELECT */
+function selectItem(index) {
+  const item = currentSuggestions[index];
+
+  input.value = item["Nederlandse naam"];
+  document.getElementById("suggestions").innerHTML = "";
+
+  render([item]);
+}
 
 /* FOTO */
 function getFoto(item) {
   let url = item["Foto"];
-  return (!url || !url.startsWith("http")) ? FALLBACK : url;
+  if (!url || !url.startsWith("http")) return FALLBACK;
+  return url;
 }
 
 /* LIJST */
-function renderList(list) {
-  currentList = list;
+function render(list) {
+  const container = document.getElementById("results");
 
-  results.innerHTML = list.map((item, index) => `
+  if (!list.length) {
+    container.innerHTML = "<p>Geen resultaat</p>";
+    return;
+  }
+
+  container.innerHTML = list.map((item, index) => `
     <div class="card" onclick="openDetail(${index})">
+
       <img src="${getFoto(item)}" class="card-img">
 
       <div class="card-content">
@@ -87,6 +174,7 @@ function renderList(list) {
           ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
         </div>
       </div>
+
     </div>
   `).join("");
 }
@@ -95,15 +183,17 @@ function renderList(list) {
 function openDetail(index) {
   const item = currentList[index];
 
-  results.innerHTML = `
+  const imgUrl = getFoto(item);
+
+  document.getElementById("results").innerHTML = `
     <div class="card" style="flex-direction:column;">
       <button onclick="goBack()">⬅ Terug</button>
 
       <h2>${item["Nederlandse naam"]}</h2>
       <p>${item["Omschrijving"]}</p>
 
-      <img src="${getFoto(item)}" class="detail-img"
-           onclick="openLightbox('${getFoto(item)}')">
+      <img src="${imgUrl}" class="detail-img"
+           onclick="openLightbox('${imgUrl}')">
 
       <div class="theme" data-theme="${item["Thema"]}">
         ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
@@ -114,7 +204,7 @@ function openDetail(index) {
 
 /* TERUG */
 function goBack() {
-  renderList(currentList);
+  render(currentList.slice(0, 10));
 }
 
 /* LIGHTBOX */
@@ -130,13 +220,14 @@ document.getElementById("lightbox").onclick = () => {
 /* SHARE */
 const shareBtn = document.getElementById("shareBtn");
 
-if (navigator.share) {
-  shareBtn.onclick = () => {
+if (shareBtn && navigator.share) {
+  shareBtn.addEventListener("click", () => {
     navigator.share({
-      title: "Vaste planten – Themazoeker",
+      title: "Hello Garden",
+      text: "Bekijk deze planten tool",
       url: window.location.href
     });
-  };
-} else {
+  });
+} else if (shareBtn) {
   shareBtn.style.display = "none";
 }
