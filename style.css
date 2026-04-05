@@ -35,34 +35,54 @@ header {
   display: none;
 }
 
-/* CARD */
+/* CARD MET FOTO LINKS */
 .card {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+
   background: #ffffff;
   border-radius: 18px;
-  padding: 18px;
+  padding: 15px;
   margin-bottom: 15px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
+/* FOTO LIJST */
+.card-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* TEKST BLOK */
+.card-content {
+  flex: 1;
+}
+
 /* TITELS */
 .card h2 {
-  margin: 0 0 5px 0;
+  margin: 0 0 4px 0;
+  font-size: 18px;
 }
 
 .card p {
   margin: 0;
   color: #555;
+  font-size: 14px;
 }
 
-/* THEMA */
+/* THEMA (GROTER) */
 .theme {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 12px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 14px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: bold;
 }
 
