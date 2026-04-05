@@ -5,13 +5,11 @@ body {
   background: #f2f4f5;
 }
 
-/* HEADER */
 header {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* SEARCH */
 .search-wrapper {
   position: relative;
   margin-bottom: 15px;
@@ -24,7 +22,6 @@ header {
   border-radius: 12px;
   border: none;
   background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 #clearBtn {
@@ -35,34 +32,30 @@ header {
   display: none;
 }
 
-/* CARD MET FOTO LINKS */
+/* CARD */
 .card {
   display: flex;
   gap: 15px;
   align-items: center;
-
   background: #ffffff;
   border-radius: 18px;
   padding: 15px;
   margin-bottom: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* FOTO LIJST */
+/* FOTO */
 .card-img {
   width: 70px;
   height: 70px;
   border-radius: 12px;
   object-fit: cover;
-  flex-shrink: 0;
 }
 
-/* TEKST BLOK */
+/* CONTENT */
 .card-content {
   flex: 1;
 }
 
-/* TITELS */
 .card h2 {
   margin: 0 0 4px 0;
   font-size: 18px;
@@ -71,13 +64,11 @@ header {
 .card p {
   margin: 0;
   color: #555;
-  font-size: 14px;
 }
 
-/* THEMA (GROTER) */
+/* THEMA */
 .theme {
   display: inline-flex;
-  align-items: center;
   gap: 6px;
   margin-top: 10px;
   padding: 10px 14px;
@@ -86,56 +77,29 @@ header {
   font-weight: bold;
 }
 
-/* KLEUREN */
-.theme[data-theme="Bijen- en vlinderlokkers"] { background:#FEE191; }
-.theme[data-theme="Bodembedekkend"] { background:#B5D99C; }
-.theme[data-theme="Geurend"] { background:#FFD7E6; }
-.theme[data-theme="Schaduw"] { background:#C2C9E8; }
-.theme[data-theme="Specials"] { background:#C1B2FF; }
 .theme[data-theme="Grassen"] { background:#B0D0D3; }
 .theme[data-theme="Kruiden"] { background:#C9E0A5; }
-.theme[data-theme="Wild & Inheems"] { background:#DEC089; }
+.theme[data-theme="Schaduw"] { background:#C2C9E8; }
+.theme[data-theme="Bijen- en vlinderlokkers"] { background:#FEE191; }
 
-/* DETAIL FOTO */
+/* DETAIL */
 .detail-img {
   width: 100%;
-  max-width: 420px;
-  border-radius: 14px;
-  margin-top: 15px;
-}
-
-/* BUTTON */
-button {
-  background: #356859;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-top: 10px;
-  cursor: pointer;
 }
 
 /* FOOTER */
 .app-footer {
   text-align: center;
-  margin-top: 30px;
-  color: #666;
-}
-
-.version {
-  font-size: 12px;
-  margin-top: 5px;
+  margin-top: 20px;
 }
 
 /* LIGHTBOX */
 #lightbox {
   display: none;
   position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.85);
   justify-content: center;
   align-items: center;
@@ -144,5 +108,4 @@ button {
 #lightbox img {
   max-width: 90%;
   max-height: 90%;
-  border-radius: 12px;
 }
