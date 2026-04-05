@@ -5,7 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vaste planten – Themazoeker</title>
 
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
+
+  <!-- 🔥 PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#356859">
+
+  <!-- iOS icoon -->
+  <link rel="apple-touch-icon" href="icon.png">
 </head>
 
 <body>
@@ -27,7 +34,7 @@
   <footer class="app-footer">
     <p>Tool gemaakt door BvB</p>
     <button id="shareBtn">📤 Deel deze tool</button>
-    <p class="version">v1.0</p>
+    <p class="version">v1.1</p>
   </footer>
 
 </main>
@@ -37,7 +44,14 @@
   <img id="lightboxImg">
 </div>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
+
+<!-- 🔥 SERVICE WORKER -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
 
 </body>
 </html>
