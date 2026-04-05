@@ -4,6 +4,7 @@ let allData = [];
 let currentSuggestions = [];
 let currentList = [];
 let lastDataString = "";
+let dataLoaded = false;
 
 /* THEMA ICONEN */
 const themeIcons = {
@@ -37,19 +38,14 @@ function showUpdateBar() {
     color: "#fff",
     padding: "12px 16px",
     borderRadius: "12px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
     display: "flex",
     gap: "10px",
-    alignItems: "center",
     zIndex: 9999
   });
 
   document.body.appendChild(bar);
 
-  // 🔥 AUTO REFRESH NA 10 SEC
-  setTimeout(() => {
-    location.reload();
-  }, 10000);
+  setTimeout(() => location.reload(), 10000);
 }
 
 /* 🔥 DATA LADEN */
@@ -62,13 +58,15 @@ async function loadData() {
     const text = await res.text();
 
     if (lastDataString && lastDataString !== text) {
-      console.log("🔄 Nieuwe data gevonden");
       showUpdateBar();
       return;
     }
 
     lastDataString = text;
     allData = JSON.parse(text);
+    dataLoaded = true;
+
+    console.log("DATA OK");
 
   } catch (e) {
     console.log("offline");
@@ -78,7 +76,7 @@ async function loadData() {
 /* INIT */
 loadData();
 
-/* 🔁 CHECK ELKE 30 SEC */
+/* AUTO CHECK */
 setInterval(loadData, 30000);
 
 /* ELEMENTEN */
@@ -87,6 +85,12 @@ const clearBtn = document.getElementById("clearBtn");
 
 /* INPUT */
 input.addEventListener("input", () => {
+
+  if (!dataLoaded) {
+    console.log("data nog niet geladen");
+    return;
+  }
+
   const value = input.value.toLowerCase();
 
   clearBtn.style.display = value ? "block" : "none";
@@ -110,22 +114,16 @@ input.addEventListener("input", () => {
 });
 
 /* CLEAR */
-clearBtn.addEventListener("click", () => {
+clearBtn.onclick = () => {
   input.value = "";
   document.getElementById("suggestions").innerHTML = "";
   document.getElementById("results").innerHTML = "";
   clearBtn.style.display = "none";
-  input.focus();
-});
+};
 
 /* DROPDOWN */
 function showSuggestions(list) {
   const box = document.getElementById("suggestions");
-
-  if (!list.length) {
-    box.innerHTML = "";
-    return;
-  }
 
   box.innerHTML = list.map((item, i) => `
     <div class="suggestion" onclick="selectItem(${i})">
@@ -138,32 +136,23 @@ function showSuggestions(list) {
 /* SELECT */
 function selectItem(index) {
   const item = currentSuggestions[index];
-
   input.value = item["Nederlandse naam"];
   document.getElementById("suggestions").innerHTML = "";
-
   render([item]);
 }
 
 /* FOTO */
 function getFoto(item) {
   let url = item["Foto"];
-  if (!url || !url.startsWith("http")) return FALLBACK;
-  return url;
+  return (!url || !url.startsWith("http")) ? FALLBACK : url;
 }
 
 /* LIJST */
 function render(list) {
   const container = document.getElementById("results");
 
-  if (!list.length) {
-    container.innerHTML = "<p>Geen resultaat</p>";
-    return;
-  }
-
   container.innerHTML = list.map((item, index) => `
     <div class="card" onclick="openDetail(${index})">
-
       <img src="${getFoto(item)}" class="card-img">
 
       <div class="card-content">
@@ -174,7 +163,6 @@ function render(list) {
           ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
         </div>
       </div>
-
     </div>
   `).join("");
 }
@@ -183,8 +171,6 @@ function render(list) {
 function openDetail(index) {
   const item = currentList[index];
 
-  const imgUrl = getFoto(item);
-
   document.getElementById("results").innerHTML = `
     <div class="card" style="flex-direction:column;">
       <button onclick="goBack()">⬅ Terug</button>
@@ -192,8 +178,8 @@ function openDetail(index) {
       <h2>${item["Nederlandse naam"]}</h2>
       <p>${item["Omschrijving"]}</p>
 
-      <img src="${imgUrl}" class="detail-img"
-           onclick="openLightbox('${imgUrl}')">
+      <img src="${getFoto(item)}" class="detail-img"
+           onclick="openLightbox('${getFoto(item)}')">
 
       <div class="theme" data-theme="${item["Thema"]}">
         ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
@@ -221,13 +207,12 @@ document.getElementById("lightbox").onclick = () => {
 const shareBtn = document.getElementById("shareBtn");
 
 if (shareBtn && navigator.share) {
-  shareBtn.addEventListener("click", () => {
+  shareBtn.onclick = () => {
     navigator.share({
       title: "Hello Garden",
-      text: "Bekijk deze planten tool",
       url: window.location.href
     });
-  });
+  };
 } else if (shareBtn) {
   shareBtn.style.display = "none";
 }
