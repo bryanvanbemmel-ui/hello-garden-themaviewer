@@ -3,22 +3,36 @@ const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 let allData = [];
 let currentList = [];
 
-/* ICONEN */
+/* THEMA ICONEN */
 const themeIcons = {
-  "Bijen- en vlinderlokkers": "🐝",
-  "Bodembedekkend": "🌿",
-  "Geurend": "🌸",
-  "Schaduw": "🌑",
-  "Specials": "⭐",
   "Grassen": "🌾",
   "Kruiden": "🍃",
-  "Wild & Inheems": "🌼"
+  "Schaduw": "🌑",
+  "Bijen- en vlinderlokkers": "🐝"
 };
 
-/* DATA */
-fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" })
-  .then(res => res.json())
-  .then(data => allData = data);
+/* 🔥 DATA LADEN (ONLINE + OFFLINE) */
+async function loadData() {
+  try {
+    const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
+    const data = await res.json();
+
+    localStorage.setItem("plantData", JSON.stringify(data));
+
+    console.log("ONLINE DATA");
+    return data;
+
+  } catch (e) {
+    console.log("OFFLINE DATA");
+
+    const local = localStorage.getItem("plantData");
+    return local ? JSON.parse(local) : [];
+  }
+}
+
+loadData().then(data => {
+  allData = data;
+});
 
 /* ELEMENTEN */
 const input = document.getElementById("searchBox");
@@ -51,59 +65,45 @@ clearBtn.onclick = () => {
   clearBtn.style.display = "none";
 };
 
-/* FOTO HELPER */
+/* FOTO */
 function getFoto(item) {
   let url = item["Foto"];
-  if (!url || !url.startsWith("http")) return FALLBACK;
-  return url;
+  return (!url || !url.startsWith("http")) ? FALLBACK : url;
 }
 
-/* LIJST MET FOTO LINKS */
+/* LIJST */
 function renderList(list) {
   currentList = list;
 
-  results.innerHTML = list.map((item, index) => {
+  results.innerHTML = list.map((item, index) => `
+    <div class="card" onclick="openDetail(${index})">
+      <img src="${getFoto(item)}" class="card-img">
 
-    const imgUrl = getFoto(item);
+      <div class="card-content">
+        <h2>${item["Nederlandse naam"]}</h2>
+        <p>${item["Omschrijving"]}</p>
 
-    return `
-      <div class="card" onclick="openDetail(${index})">
-
-        <img src="${imgUrl}"
-             class="card-img"
-             onerror="this.src='${FALLBACK}'">
-
-        <div class="card-content">
-          <h2>${item["Nederlandse naam"]}</h2>
-          <p>${item["Omschrijving"]}</p>
-
-          <div class="theme" data-theme="${item["Thema"]}">
-            ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
-          </div>
+        <div class="theme" data-theme="${item["Thema"]}">
+          ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
         </div>
-
       </div>
-    `;
-  }).join("");
+    </div>
+  `).join("");
 }
 
 /* DETAIL */
 function openDetail(index) {
   const item = currentList[index];
 
-  const imgUrl = getFoto(item);
-
   results.innerHTML = `
-    <div class="card" style="flex-direction:column; align-items:flex-start;">
+    <div class="card" style="flex-direction:column;">
       <button onclick="goBack()">⬅ Terug</button>
 
       <h2>${item["Nederlandse naam"]}</h2>
       <p>${item["Omschrijving"]}</p>
 
-      <img src="${imgUrl}"
-           class="detail-img"
-           onclick="openLightbox('${imgUrl}')"
-           onerror="this.src='${FALLBACK}'">
+      <img src="${getFoto(item)}" class="detail-img"
+           onclick="openLightbox('${getFoto(item)}')">
 
       <div class="theme" data-theme="${item["Thema"]}">
         ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
@@ -131,13 +131,12 @@ document.getElementById("lightbox").onclick = () => {
 const shareBtn = document.getElementById("shareBtn");
 
 if (navigator.share) {
-  shareBtn.addEventListener("click", () => {
+  shareBtn.onclick = () => {
     navigator.share({
       title: "Vaste planten – Themazoeker",
-      text: "Bekijk deze planten tool",
       url: window.location.href
     });
-  });
+  };
 } else {
   shareBtn.style.display = "none";
 }
