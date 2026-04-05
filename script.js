@@ -23,7 +23,7 @@ const clearBtn = document.getElementById("clearBtn");
 const results = document.getElementById("results");
 const installBtn = document.getElementById("installBtn");
 
-/* 🔥 INSTALL */
+/* INSTALL */
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -42,7 +42,7 @@ if (installBtn) {
   };
 }
 
-/* 🔥 SHARE (ANDROID + IOS + FALLBACK) */
+/* 🔥 SHARE (SUPER STRAK) */
 window.addEventListener("load", () => {
 
   const shareBtn = document.getElementById("shareBtn");
@@ -51,19 +51,16 @@ window.addEventListener("load", () => {
   shareBtn.onclick = async () => {
 
     const shareData = {
-      title: "Vaste planten – Themazoeker",
-      text: "Bekijk deze planten tool",
+      title: "🌿 Vaste planten – Themazoeker",
       url: window.location.href
+      // ❌ GEEN text meer!
     };
 
-    // native share
     if (navigator.share) {
       try {
         await navigator.share(shareData);
         return;
-      } catch (err) {
-        console.log("Native share niet gelukt");
-      }
+      } catch (err) {}
     }
 
     // fallback
@@ -77,50 +74,23 @@ window.addEventListener("load", () => {
 
 });
 
-/* 🔄 DATA LADEN */
+/* DATA */
 async function loadData() {
   try {
     const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
     const text = await res.text();
 
     if (lastDataString && lastDataString !== text) {
-      showUpdateBar();
+      location.reload();
       return;
     }
 
     lastDataString = text;
     allData = JSON.parse(text);
 
-  } catch (e) {
-    console.log("offline");
-  }
+  } catch (e) {}
 }
 
-/* 🔄 UPDATE MELDING */
-function showUpdateBar() {
-  if (document.getElementById("updateBar")) return;
-
-  const bar = document.createElement("div");
-  bar.innerHTML = "🔄 Nieuwe data beschikbaar – verversen…";
-
-  Object.assign(bar.style, {
-    position: "fixed",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "#356859",
-    color: "#fff",
-    padding: "10px 15px",
-    borderRadius: "10px",
-    zIndex: 9999
-  });
-
-  document.body.appendChild(bar);
-
-  setTimeout(() => location.reload(), 8000);
-}
-
-/* INIT */
 loadData();
 setInterval(loadData, 30000);
 
@@ -128,7 +98,6 @@ setInterval(loadData, 30000);
 input.addEventListener("input", () => {
 
   const value = input.value.toLowerCase();
-
   clearBtn.style.display = value ? "block" : "none";
 
   if (!value || !allData.length) {
@@ -169,7 +138,7 @@ function render(list) {
         <h2>${item["Nederlandse naam"]}</h2>
         <p>${item["Omschrijving"]}</p>
 
-        <div class="theme" data-theme="${item["Thema"]}">
+        <div class="theme">
           ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
         </div>
       </div>
@@ -191,7 +160,7 @@ function openDetail(index) {
 
       <img src="${getFoto(item)}" class="detail-img">
 
-      <div class="theme" data-theme="${item["Thema"]}">
+      <div class="theme">
         ${themeIcons[item["Thema"]] || ""} ${item["Thema"] || ""}
       </div>
     </div>
