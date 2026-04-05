@@ -177,7 +177,7 @@ const shareBtn = document.getElementById("shareBtn");
 if (shareBtn && navigator.share) {
   shareBtn.onclick = () => {
     navigator.share({
-      title: "Hello Garden",
+      title: "Thema zoeker",
       url: window.location.href
     });
   };
