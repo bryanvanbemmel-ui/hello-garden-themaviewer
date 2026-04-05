@@ -3,6 +3,18 @@ const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 let allData = [];
 let currentList = [];
 
+/* THEMA ICONEN */
+const themeIcons = {
+  "Bijen- en vlinderlokkers": "🐝",
+  "Bodembedekkend": "🌿",
+  "Geurend": "🌸",
+  "Schaduw": "🌑",
+  "Specials": "⭐",
+  "Grassen": "🌾",
+  "Kruiden": "🍃",
+  "Wild & Inheems": "🌼"
+};
+
 /* DATA LADEN */
 fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" })
   .then(res => res.json())
@@ -49,7 +61,7 @@ function renderList(list) {
       <p>${item["Omschrijving"]}</p>
 
       <div class="theme" data-theme="${item["Thema"]}">
-        ${item["Thema"]}
+        ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
       </div>
     </div>
   `).join("");
@@ -77,7 +89,7 @@ function openDetail(index) {
            onerror="this.src='${FALLBACK}'">
 
       <div class="theme" data-theme="${item["Thema"]}">
-        ${item["Thema"]}
+        ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
       </div>
     </div>
   `;
@@ -97,3 +109,18 @@ function openLightbox(src) {
 document.getElementById("lightbox").onclick = () => {
   document.getElementById("lightbox").style.display = "none";
 };
+
+/* SHARE */
+const shareBtn = document.getElementById("shareBtn");
+
+if (navigator.share) {
+  shareBtn.addEventListener("click", () => {
+    navigator.share({
+      title: "Vaste planten – Themazoeker",
+      text: "Bekijk deze planten tool",
+      url: window.location.href
+    });
+  });
+} else {
+  shareBtn.style.display = "none";
+}
