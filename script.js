@@ -3,7 +3,7 @@ const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 let allData = [];
 let currentList = [];
 
-/* THEMA ICONEN */
+/* ICONEN */
 const themeIcons = {
   "Bijen- en vlinderlokkers": "🐝",
   "Bodembedekkend": "🌿",
@@ -15,7 +15,7 @@ const themeIcons = {
   "Wild & Inheems": "🌼"
 };
 
-/* DATA LADEN */
+/* DATA */
 fetch("/hello-garden-themaviewer/data.json?v=" + Date.now(), { cache: "no-store" })
   .then(res => res.json())
   .then(data => allData = data);
@@ -51,33 +51,50 @@ clearBtn.onclick = () => {
   clearBtn.style.display = "none";
 };
 
-/* LIJST */
+/* FOTO HELPER */
+function getFoto(item) {
+  let url = item["Foto"];
+  if (!url || !url.startsWith("http")) return FALLBACK;
+  return url;
+}
+
+/* LIJST MET FOTO LINKS */
 function renderList(list) {
   currentList = list;
 
-  results.innerHTML = list.map((item, index) => `
-    <div class="card" onclick="openDetail(${index})">
-      <h2>${item["Nederlandse naam"]}</h2>
-      <p>${item["Omschrijving"]}</p>
+  results.innerHTML = list.map((item, index) => {
 
-      <div class="theme" data-theme="${item["Thema"]}">
-        ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
+    const imgUrl = getFoto(item);
+
+    return `
+      <div class="card" onclick="openDetail(${index})">
+
+        <img src="${imgUrl}"
+             class="card-img"
+             onerror="this.src='${FALLBACK}'">
+
+        <div class="card-content">
+          <h2>${item["Nederlandse naam"]}</h2>
+          <p>${item["Omschrijving"]}</p>
+
+          <div class="theme" data-theme="${item["Thema"]}">
+            ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
+          </div>
+        </div>
+
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 /* DETAIL */
 function openDetail(index) {
   const item = currentList[index];
 
-  let imgUrl = item["Foto"];
-  if (!imgUrl || !imgUrl.startsWith("http")) {
-    imgUrl = FALLBACK;
-  }
+  const imgUrl = getFoto(item);
 
   results.innerHTML = `
-    <div class="card">
+    <div class="card" style="flex-direction:column; align-items:flex-start;">
       <button onclick="goBack()">⬅ Terug</button>
 
       <h2>${item["Nederlandse naam"]}</h2>
