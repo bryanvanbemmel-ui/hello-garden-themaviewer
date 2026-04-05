@@ -5,12 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vaste planten – Themazoeker</title>
 
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=13">
 
   <!-- PWA -->
   <link rel="manifest" href="/hello-garden-themaviewer/manifest.json">
   <meta name="theme-color" content="#356859">
   <link rel="apple-touch-icon" href="icon.png">
+
+  <!-- 🔥 ANDROID SHARE FIX (HEEL BELANGRIJK) -->
+  <meta property="og:title" content="🌿 Vaste planten – Themazoeker">
+  <meta property="og:description" content="Installeer planten tool">
+  <meta property="og:image" content="https://bryanvanbemmel-ui.github.io/hello-garden-themaviewer/icon.png">
+  <meta property="og:url" content="https://bryanvanbemmel-ui.github.io/hello-garden-themaviewer/">
+  <meta property="og:type" content="website">
+
 </head>
 
 <body>
@@ -33,11 +41,10 @@
   <footer class="app-footer">
     <p>Tool gemaakt door BvB</p>
 
-    <!-- 🔥 INSTALL KNOP -->
     <button id="installBtn" style="display:none;">📲 Installeer app</button>
-
     <button id="shareBtn">📤 Deel deze tool</button>
-    <p class="version">v1.3</p>
+
+    <p class="version">v1.5</p>
   </footer>
 
 </main>
@@ -46,7 +53,7 @@
   <img id="lightboxImg">
 </div>
 
-<script src="script.js?v=10"></script>
+<script src="script.js?v=13"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
