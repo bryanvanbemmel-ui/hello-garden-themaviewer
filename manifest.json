@@ -1,6 +1,6 @@
 {
   "name": "Vaste planten – Themazoeker",
-  "short_name": "Planten",
+  "short_name": "Themazoeker",
   "start_url": "/hello-garden-themaviewer/",
   "display": "standalone",
   "background_color": "#f2f4f5",
