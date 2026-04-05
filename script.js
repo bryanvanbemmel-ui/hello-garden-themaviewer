@@ -27,7 +27,7 @@ const installBtn = document.getElementById("installBtn");
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installBtn.style.display = "inline-block";
+  if (installBtn) installBtn.style.display = "inline-block";
 });
 
 if (installBtn) {
@@ -42,37 +42,38 @@ if (installBtn) {
   };
 }
 
-/* 🔥 SHARE (ALTIJD WERKEND) */
+/* 🔥 SHARE (ANDROID + IOS + FALLBACK) */
 window.addEventListener("load", () => {
 
   const shareBtn = document.getElementById("shareBtn");
-
   if (!shareBtn) return;
 
-  if (navigator.share) {
-    shareBtn.style.display = "inline-block";
+  shareBtn.onclick = async () => {
 
-    shareBtn.onclick = async () => {
+    const shareData = {
+      title: "Vaste planten – Themazoeker",
+      text: "Bekijk deze planten tool",
+      url: window.location.href
+    };
+
+    // native share
+    if (navigator.share) {
       try {
-        await navigator.share({
-          title: "Vaste planten – Themazoeker",
-          text: "Bekijk deze planten tool",
-          url: window.location.href
-        });
+        await navigator.share(shareData);
+        return;
       } catch (err) {
-        console.log("Share geannuleerd");
+        console.log("Native share niet gelukt");
       }
-    };
+    }
 
-  } else {
     // fallback
-    shareBtn.style.display = "inline-block";
-
-    shareBtn.onclick = () => {
-      navigator.clipboard.writeText(window.location.href);
+    try {
+      await navigator.clipboard.writeText(window.location.href);
       alert("Link gekopieerd 👍");
-    };
-  }
+    } catch {
+      prompt("Kopieer deze link:", window.location.href);
+    }
+  };
 
 });
 
