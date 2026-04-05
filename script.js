@@ -42,7 +42,7 @@ if (installBtn) {
   };
 }
 
-/* 🔥 SHARE (SUPER STRAK) */
+/* 🔥 SHARE (PERFECT BALANCE) */
 window.addEventListener("load", () => {
 
   const shareBtn = document.getElementById("shareBtn");
@@ -52,8 +52,8 @@ window.addEventListener("load", () => {
 
     const shareData = {
       title: "🌿 Vaste planten – Themazoeker",
+      text: "Installeer planten tool",
       url: window.location.href
-      // ❌ GEEN text meer!
     };
 
     if (navigator.share) {
