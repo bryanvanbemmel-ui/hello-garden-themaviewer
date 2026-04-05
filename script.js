@@ -63,7 +63,7 @@ window.addEventListener("load", () => {
 
     const shareData = {
       title: "🌿 Vaste planten – Themazoeker",
-      text: "Installeer planten tool",
+      text: "Installeer vaste planten thema zoeker tool",
       url: window.location.href
     };
 
