@@ -1,7 +1,20 @@
-const CACHE_NAME = "app-cache-v2";
+const CACHE_NAME = "app-shell-v1";
+
+const urlsToCache = [
+  "/hello-garden-themaviewer/",
+  "/hello-garden-themaviewer/index.html",
+  "/hello-garden-themaviewer/style.css",
+  "/hello-garden-themaviewer/script.js",
+  "/hello-garden-themaviewer/icon.png"
+];
 
 /* INSTALL */
 self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
+  );
   self.skipWaiting();
 });
 
@@ -11,14 +24,11 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys =>
       Promise.all(
         keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key); // 🔥 oude cache weg
-          }
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       )
     )
   );
-
   self.clients.claim();
 });
 
@@ -26,20 +36,16 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
 
-  // 🔥 data.json ALTIJD LIVE
+  // 🔥 JSON altijd live
   if (url.pathname.includes("data.json")) {
-    event.respondWith(fetch(event.request, { cache: "no-store" }));
-    return;
-  }
-
-  // 🔥 HTML ALTIJD LIVE (BELANGRIJK)
-  if (event.request.destination === "document") {
     event.respondWith(fetch(event.request));
     return;
   }
 
-  // overige bestanden
+  // 🔥 cache-first voor app
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    caches.match(event.request).then(res => {
+      return res || fetch(event.request);
+    })
   );
 });
