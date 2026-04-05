@@ -1,18 +1,7 @@
-const CACHE_NAME = "app-cache-v5"; // 🔥 versie verhogen!
-
-const urlsToCache = [
-  "/hello-garden-themaviewer/",
-  "/hello-garden-themaviewer/index.html",
-  "/hello-garden-themaviewer/style.css",
-  "/hello-garden-themaviewer/script.js",
-  "/hello-garden-themaviewer/icon.png"
-];
+const CACHE_NAME = "app-cache-v6";
 
 /* INSTALL */
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-  );
   self.skipWaiting();
 });
 
@@ -20,13 +9,7 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key); // 🔥 oude cache weg
-          }
-        })
-      )
+      Promise.all(keys.map(key => caches.delete(key))) // 🔥 alles weg
     )
   );
   self.clients.claim();
@@ -42,7 +25,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // 🔥 CSS & JS altijd vers ophalen
+  // 🔥 CSS & JS NOOIT cachen
   if (
     url.pathname.endsWith(".css") ||
     url.pathname.endsWith(".js")
@@ -51,8 +34,6 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // overige: cache
-  event.respondWith(
-    caches.match(event.request).then(res => res || fetch(event.request))
-  );
+  // 🔥 overige gewoon live
+  event.respondWith(fetch(event.request));
 });
