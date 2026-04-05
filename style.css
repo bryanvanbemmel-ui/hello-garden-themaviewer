@@ -42,13 +42,9 @@ header {
   padding: 18px;
   margin-bottom: 15px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: transform 0.1s ease;
 }
 
-.card:active {
-  transform: scale(0.98);
-}
-
+/* TITELS */
 .card h2 {
   margin: 0 0 5px 0;
 }
@@ -60,7 +56,9 @@ header {
 
 /* THEMA */
 .theme {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-top: 12px;
   padding: 8px 12px;
   border-radius: 10px;
@@ -93,8 +91,20 @@ button {
   border: none;
   padding: 10px 14px;
   border-radius: 10px;
-  margin-bottom: 10px;
+  margin-top: 10px;
   cursor: pointer;
+}
+
+/* FOOTER */
+.app-footer {
+  text-align: center;
+  margin-top: 30px;
+  color: #666;
+}
+
+.version {
+  font-size: 12px;
+  margin-top: 5px;
 }
 
 /* LIGHTBOX */
