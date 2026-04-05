@@ -22,7 +22,6 @@ const input = document.getElementById("searchBox");
 const clearBtn = document.getElementById("clearBtn");
 const results = document.getElementById("results");
 const installBtn = document.getElementById("installBtn");
-const shareBtn = document.getElementById("shareBtn");
 
 /* 🔥 INSTALL */
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -31,48 +30,102 @@ window.addEventListener('beforeinstallprompt', (e) => {
   installBtn.style.display = "inline-block";
 });
 
-installBtn.onclick = async () => {
-  if (!deferredPrompt) return;
+if (installBtn) {
+  installBtn.onclick = async () => {
+    if (!deferredPrompt) return;
 
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
 
-  deferredPrompt = null;
-  installBtn.style.display = "none";
-};
-
-/* 🔥 SHARE (FIX) */
-if (shareBtn && navigator.share) {
-  shareBtn.onclick = () => {
-    navigator.share({
-      title: "Vaste planten – Themazoeker",
-      text: "Bekijk deze planten tool",
-      url: window.location.href
-    });
+    deferredPrompt = null;
+    installBtn.style.display = "none";
   };
-} else if (shareBtn) {
-  shareBtn.style.display = "none";
 }
 
-/* 🔄 DATA */
-async function loadData() {
-  const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
-  const text = await res.text();
+/* 🔥 SHARE (ALTIJD WERKEND) */
+window.addEventListener("load", () => {
 
-  if (lastDataString && lastDataString !== text) {
-    location.reload();
-    return;
+  const shareBtn = document.getElementById("shareBtn");
+
+  if (!shareBtn) return;
+
+  if (navigator.share) {
+    shareBtn.style.display = "inline-block";
+
+    shareBtn.onclick = async () => {
+      try {
+        await navigator.share({
+          title: "Vaste planten – Themazoeker",
+          text: "Bekijk deze planten tool",
+          url: window.location.href
+        });
+      } catch (err) {
+        console.log("Share geannuleerd");
+      }
+    };
+
+  } else {
+    // fallback
+    shareBtn.style.display = "inline-block";
+
+    shareBtn.onclick = () => {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link gekopieerd 👍");
+    };
   }
 
-  lastDataString = text;
-  allData = JSON.parse(text);
+});
+
+/* 🔄 DATA LADEN */
+async function loadData() {
+  try {
+    const res = await fetch("/hello-garden-themaviewer/data.json?v=" + Date.now());
+    const text = await res.text();
+
+    if (lastDataString && lastDataString !== text) {
+      showUpdateBar();
+      return;
+    }
+
+    lastDataString = text;
+    allData = JSON.parse(text);
+
+  } catch (e) {
+    console.log("offline");
+  }
 }
 
+/* 🔄 UPDATE MELDING */
+function showUpdateBar() {
+  if (document.getElementById("updateBar")) return;
+
+  const bar = document.createElement("div");
+  bar.innerHTML = "🔄 Nieuwe data beschikbaar – verversen…";
+
+  Object.assign(bar.style, {
+    position: "fixed",
+    bottom: "20px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "#356859",
+    color: "#fff",
+    padding: "10px 15px",
+    borderRadius: "10px",
+    zIndex: 9999
+  });
+
+  document.body.appendChild(bar);
+
+  setTimeout(() => location.reload(), 8000);
+}
+
+/* INIT */
 loadData();
 setInterval(loadData, 30000);
 
 /* INPUT */
 input.addEventListener("input", () => {
+
   const value = input.value.toLowerCase();
 
   clearBtn.style.display = value ? "block" : "none";
