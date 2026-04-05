@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vaste planten – Themazoeker</title>
 
-  <link rel="stylesheet" href="style.<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vaste planten – Themazoeker</title>
-
   <link rel="stylesheet" href="style.css?v=7">
 
   <!-- PWA -->
@@ -51,55 +44,6 @@
 
 <script src="script.js?v=7"></script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
-</script>
-
-</body>
-</html>css?v=6">
-
-  <!-- 🔥 PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#356859">
-
-  <!-- iOS icoon -->
-  <link rel="apple-touch-icon" href="icon.png">
-</head>
-
-<body>
-
-<header>
-  <h1>🌿 Vaste planten – Themazoeker 👀</h1>
-  <p>Zoek op 🇳🇱 Nederlandse of Latijnse naam</p>
-</header>
-
-<main>
-
-  <div class="search-wrapper">
-    <input id="searchBox" type="text" placeholder="Zoek plant..." autocomplete="off">
-    <span id="clearBtn">✖</span>
-  </div>
-
-  <div id="results"></div>
-
-  <footer class="app-footer">
-    <p>Tool gemaakt door BvB</p>
-    <button id="shareBtn">📤 Deel deze tool</button>
-    <p class="version">v1.1</p>
-  </footer>
-
-</main>
-
-<!-- LIGHTBOX -->
-<div id="lightbox">
-  <img id="lightboxImg">
-</div>
-
-<script src="script.js?v=6"></script>
-
-<!-- 🔥 SERVICE WORKER -->
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
