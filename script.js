@@ -4,9 +4,8 @@ let allData = [];
 let currentSuggestions = [];
 let currentList = [];
 let lastDataString = "";
-let dataLoaded = false;
 
-/* THEMA ICONEN */
+/* ICONEN */
 const themeIcons = {
   "Bijen- en vlinderlokkers": "🐝",
   "Bodembedekkend": "🌿",
@@ -18,7 +17,7 @@ const themeIcons = {
   "Wild & Inheems": "🌼"
 };
 
-/* 🔥 UPDATE BALK */
+/* 🔄 UPDATE BALK */
 function showUpdateBar() {
   if (document.getElementById("updateBar")) return;
 
@@ -26,7 +25,7 @@ function showUpdateBar() {
   bar.id = "updateBar";
   bar.innerHTML = `
     <span>🔄 Nieuwe data beschikbaar</span>
-    <button onclick="location.reload()">Nu verversen</button>
+    <button onclick="location.reload()">Vernieuwen</button>
   `;
 
   Object.assign(bar.style, {
@@ -64,9 +63,8 @@ async function loadData() {
 
     lastDataString = text;
     allData = JSON.parse(text);
-    dataLoaded = true;
 
-    console.log("DATA OK");
+    console.log("DATA OK:", allData.length);
 
   } catch (e) {
     console.log("offline");
@@ -76,7 +74,7 @@ async function loadData() {
 /* INIT */
 loadData();
 
-/* AUTO CHECK */
+/* CHECK */
 setInterval(loadData, 30000);
 
 /* ELEMENTEN */
@@ -85,11 +83,6 @@ const clearBtn = document.getElementById("clearBtn");
 
 /* INPUT */
 input.addEventListener("input", () => {
-
-  if (!dataLoaded) {
-    console.log("data nog niet geladen");
-    return;
-  }
 
   const value = input.value.toLowerCase();
 
@@ -100,6 +93,8 @@ input.addEventListener("input", () => {
     document.getElementById("results").innerHTML = "";
     return;
   }
+
+  if (!allData.length) return; // 🔥 wacht op data
 
   const matches = allData.filter(r =>
     (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
@@ -136,9 +131,12 @@ function showSuggestions(list) {
 /* SELECT */
 function selectItem(index) {
   const item = currentSuggestions[index];
+
   input.value = item["Nederlandse naam"];
   document.getElementById("suggestions").innerHTML = "";
-  render([item]);
+
+  currentList = [item]; // 🔥 fix
+  render(currentList);
 }
 
 /* FOTO */
@@ -150,6 +148,13 @@ function getFoto(item) {
 /* LIJST */
 function render(list) {
   const container = document.getElementById("results");
+
+  if (!list.length) {
+    container.innerHTML = "<p>Geen resultaat</p>";
+    return;
+  }
+
+  currentList = list; // 🔥 altijd sync
 
   container.innerHTML = list.map((item, index) => `
     <div class="card" onclick="openDetail(${index})">
@@ -190,7 +195,7 @@ function openDetail(index) {
 
 /* TERUG */
 function goBack() {
-  render(currentList.slice(0, 10));
+  render(currentList);
 }
 
 /* LIGHTBOX */
