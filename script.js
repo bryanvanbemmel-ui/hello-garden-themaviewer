@@ -1,7 +1,6 @@
 const FALLBACK = "https://webshop.griffioenwassenaar.nl/img/plant.png";
 
 let allData = [];
-let currentSuggestions = [];
 let currentList = [];
 let lastDataString = "";
 
@@ -17,35 +16,10 @@ const themeIcons = {
   "Wild & Inheems": "🌼"
 };
 
-/* 🔄 UPDATE BALK */
-function showUpdateBar() {
-  if (document.getElementById("updateBar")) return;
-
-  const bar = document.createElement("div");
-  bar.id = "updateBar";
-  bar.innerHTML = `
-    <span>🔄 Nieuwe data beschikbaar</span>
-    <button onclick="location.reload()">Vernieuwen</button>
-  `;
-
-  Object.assign(bar.style, {
-    position: "fixed",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "#356859",
-    color: "#fff",
-    padding: "12px 16px",
-    borderRadius: "12px",
-    display: "flex",
-    gap: "10px",
-    zIndex: 9999
-  });
-
-  document.body.appendChild(bar);
-
-  setTimeout(() => location.reload(), 10000);
-}
+/* ELEMENTEN */
+const input = document.getElementById("searchBox");
+const results = document.getElementById("results");
+const clearBtn = document.getElementById("clearBtn");
 
 /* 🔥 DATA LADEN */
 async function loadData() {
@@ -56,6 +30,7 @@ async function loadData() {
 
     const text = await res.text();
 
+    // update check
     if (lastDataString && lastDataString !== text) {
       showUpdateBar();
       return;
@@ -64,79 +39,73 @@ async function loadData() {
     lastDataString = text;
     allData = JSON.parse(text);
 
-    console.log("DATA OK:", allData.length);
+    console.log("DATA GELADEN:", allData.length);
 
   } catch (e) {
     console.log("offline");
   }
 }
 
+/* 🔄 UPDATE BALK */
+function showUpdateBar() {
+  if (document.getElementById("updateBar")) return;
+
+  const bar = document.createElement("div");
+  bar.innerHTML = "🔄 Nieuwe data beschikbaar – verversen…";
+
+  Object.assign(bar.style, {
+    position: "fixed",
+    bottom: "20px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "#356859",
+    color: "#fff",
+    padding: "10px 15px",
+    borderRadius: "10px",
+    zIndex: 9999
+  });
+
+  document.body.appendChild(bar);
+
+  setTimeout(() => location.reload(), 8000);
+}
+
 /* INIT */
 loadData();
-
-/* CHECK */
 setInterval(loadData, 30000);
 
-/* ELEMENTEN */
-const input = document.getElementById("searchBox");
-const clearBtn = document.getElementById("clearBtn");
+/* 🔍 ZOEKEN */
+input.addEventListener("input", handleSearch);
 
-/* INPUT */
-input.addEventListener("input", () => {
+/* CLEAR */
+clearBtn.onclick = () => {
+  input.value = "";
+  results.innerHTML = "";
+  clearBtn.style.display = "none";
+};
+
+/* 🔥 ZOEK FUNCTIE */
+function handleSearch() {
 
   const value = input.value.toLowerCase();
 
   clearBtn.style.display = value ? "block" : "none";
 
-  if (!value) {
-    document.getElementById("suggestions").innerHTML = "";
-    document.getElementById("results").innerHTML = "";
+  if (!value || !allData.length) {
+    results.innerHTML = "";
     return;
   }
 
-  if (!allData.length) return; // 🔥 wacht op data
+  const matches = allData.filter(item => {
+    return (
+      (item["Nederlandse naam"] || "").toLowerCase().includes(value) ||
+      (item["Omschrijving"] || "").toLowerCase().includes(value)
+    );
+  });
 
-  const matches = allData.filter(r =>
-    (r["Nederlandse naam"] || "").toLowerCase().includes(value) ||
-    (r["Omschrijving"] || "").toLowerCase().includes(value)
-  );
-
-  currentSuggestions = matches.slice(0, 5);
   currentList = matches;
 
-  showSuggestions(currentSuggestions);
   render(matches.slice(0, 10));
-});
-
-/* CLEAR */
-clearBtn.onclick = () => {
-  input.value = "";
-  document.getElementById("suggestions").innerHTML = "";
-  document.getElementById("results").innerHTML = "";
-  clearBtn.style.display = "none";
-};
-
-/* DROPDOWN */
-function showSuggestions(list) {
-  const box = document.getElementById("suggestions");
-
-  box.innerHTML = list.map((item, i) => `
-    <div class="suggestion" onclick="selectItem(${i})">
-      <strong>${item["Nederlandse naam"]}</strong><br>
-      <small>${item["Omschrijving"]}</small>
-    </div>
-  `).join("");
-}
-
-/* SELECT */
-function selectItem(index) {
-  const item = currentSuggestions[index];
-
-  input.value = item["Nederlandse naam"];
-  document.getElementById("suggestions").innerHTML = "";
-
-  currentList = [item]; // 🔥 fix
-  render(currentList);
 }
 
 /* FOTO */
@@ -147,17 +116,10 @@ function getFoto(item) {
 
 /* LIJST */
 function render(list) {
-  const container = document.getElementById("results");
 
-  if (!list.length) {
-    container.innerHTML = "<p>Geen resultaat</p>";
-    return;
-  }
-
-  currentList = list; // 🔥 altijd sync
-
-  container.innerHTML = list.map((item, index) => `
+  results.innerHTML = list.map((item, index) => `
     <div class="card" onclick="openDetail(${index})">
+
       <img src="${getFoto(item)}" class="card-img">
 
       <div class="card-content">
@@ -168,6 +130,7 @@ function render(list) {
           ${themeIcons[item["Thema"]] || ""} ${item["Thema"]}
         </div>
       </div>
+
     </div>
   `).join("");
 }
@@ -176,7 +139,7 @@ function render(list) {
 function openDetail(index) {
   const item = currentList[index];
 
-  document.getElementById("results").innerHTML = `
+  results.innerHTML = `
     <div class="card" style="flex-direction:column;">
       <button onclick="goBack()">⬅ Terug</button>
 
@@ -195,7 +158,7 @@ function openDetail(index) {
 
 /* TERUG */
 function goBack() {
-  render(currentList);
+  render(currentList.slice(0, 10));
 }
 
 /* LIGHTBOX */
