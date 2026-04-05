@@ -1,52 +1,45 @@
-self.addEventListener("install", e => {
+const CACHE_NAME = "app-cache-v2";
+
+/* INSTALL */
+self.addEventListener("install", event => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", e => {
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", e => {
-  const url = new URL(e.self.addEventListener("install", event => {
-  // meteen actief worden
-  self.skipWaiting();
-});
-
+/* ACTIVATE */
 self.addEventListener("activate", event => {
-  // oude service workers vervangen
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key); // 🔥 oude cache weg
+          }
+        })
+      )
+    )
+  );
+
+  self.clients.claim();
 });
 
 /* FETCH */
 self.addEventListener("fetch", event => {
-
   const url = new URL(event.request.url);
 
-  // 🔥 data.json ALTIJD LIVE (heel belangrijk voor jou)
+  // 🔥 data.json ALTIJD LIVE
   if (url.pathname.includes("data.json")) {
-    event.respondWith(
-      fetch(event.request, { cache: "no-store" })
-    );
+    event.respondWith(fetch(event.request, { cache: "no-store" }));
     return;
   }
 
-  // 🔥 HTML altijd vers laden (voorkomt oude versie app)
+  // 🔥 HTML ALTIJD LIVE (BELANGRIJK)
   if (event.request.destination === "document") {
     event.respondWith(fetch(event.request));
     return;
   }
 
-  // 🔹 overige bestanden (css/js/img)
+  // overige bestanden
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
   );
-});request.url);
-
-  // altijd verse data.json
-  if (url.pathname.includes("data.json")) {
-    e.respondWith(fetch(e.request));
-    return;
-  }
-
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
